@@ -46,3 +46,58 @@ async function saveMessage({
         [telegramMsgId, chatId, userId, username, firstName, messageType, textContent, replyToMsgId, sentAt]
     );
 }
+
+ 
+async function getMessagesSince(chatId, sinceDate) {
+    const { rows } = await pool.query(
+        `SELECT
+            m.telegram_msg_id,
+            m.user_id,
+            m.username,
+            m.first_name,
+            m.message_type,
+            m.text_content,
+            m.sent_at,
+            parent.first_name AS replied_to_author,
+            parent.text_content AS replied_to_text
+         FROM messages m
+         LEFT JOIN messages parent
+            ON parent.chat_id = m.chat_id
+            AND parent.telegram_msg_id = m.reply_to_msg_id
+         WHERE m.chat_id = $1 AND m.sent_at >= $2
+         ORDER BY m.sent_at ASC`,
+        [chatId, sinceDate]
+    );
+    return rows;
+}
+
+
+async function saveSummary({ chatId, requestedBy, periodStart, periodEnd, messageCount, summaryText, modelUsed }) {
+    await pool.query(
+        `INSERT INTO summaries (chat_id, requested_by, period_start, period_end, message_count, summary_text, model_used)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [chatId, requestedBy, periodStart, periodEnd, messageCount, summaryText, modelUsed]
+    );
+}
+ 
+async function getLastSummaryTime(chatId) {
+    const { rows } = await pool.query(
+        `SELECT period_end FROM summaries WHERE chat_id = $1 ORDER BY created_at DESC LIMIT 1`,
+        [chatId]
+    );
+    return rows[0]?.period_end ?? null;
+}
+ 
+async function closePool() {
+    await pool.end();
+}
+ 
+module.exports = {
+    pool,
+    upsertChat,
+    saveMessage,
+    getMessagesSince,
+    saveSummary,
+    getLastSummaryTime,
+    closePool,
+};
