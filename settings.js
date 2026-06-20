@@ -5,7 +5,8 @@ const SETTINGS = {
     PGPORT: process.env.PGPORT || 5432,
     PGUSER: process.env.PGUSER,
     PGPASSWORD: process.env.PGPASSWORD,
-    PGDATABASE: process.env.PGDATABASE   
+    PGDATABASE: process.env.PGDATABASE,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
 }
 
 module.exports = SETTINGS;
