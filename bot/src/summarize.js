@@ -92,3 +92,44 @@ function truncate(str, maxLen) {
     if (!str) return '';
     return str.length > maxLen ? str.slice(0, maxLen) + '…' : str;
 }
+
+
+async function generateSummary(messageRows) {
+    if (messageRows.length === 0) {
+        return {
+            summaryText: 'За выбранный период сообщений не было.',
+            modelUsed: null,
+            messagesUsed: 0,
+        };
+    }
+ 
+    const trimmed = messageRows.length > MAX_MESSAGES
+        ? messageRows.slice(-MAX_MESSAGES)
+        : messageRows;
+ 
+    const chatLog = trimmed.map(formatMessage).join('\n');
+ 
+    const userPrompt = trimmed.length < messageRows.length
+        ? `(Показаны только последние ${MAX_MESSAGES} из ${messageRows.length} сообщений за период)\n\n${chatLog}`
+        : chatLog;
+ 
+    const response = await client.chat.completions.create({
+        model: MODEL,
+        messages: [
+            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'user', content: userPrompt },
+        ],
+        temperature: 0.3,
+    });
+ 
+    const summaryText = response.choices[0]?.message?.content?.trim() || 'Не удалось сгенерировать выжимку.';
+ 
+    return {
+        summaryText,
+        modelUsed: MODEL,
+        messagesUsed: trimmed.length,
+    };
+}
+ 
+module.exports = { generateSummary };
+ 
