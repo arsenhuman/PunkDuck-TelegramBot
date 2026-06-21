@@ -1,4 +1,6 @@
 
+-- Миграция 001 - инициализация схемы базы данных
+
 CREATE TABLE IF NOT EXISTS chats (
     chat_id     BIGINT PRIMARY KEY,
     title       TEXT,
