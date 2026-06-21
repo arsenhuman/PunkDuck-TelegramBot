@@ -1,8 +1,8 @@
 {
-  "name": "dilipunk",
+  "name": "PunkDuck",
   "version": "1.0.0",
-  "description": "dilirock-bot/ \\n ├── bot/                    # bot code │   ├── src/ │   │   ├── index.js        # entrypoint. start Telegraf │   │   ├── db.js           # psql connection. requests │   │   ├── summarize.js    # API calls (OpenAI) │   │   └── handlers.js     # handlers │   ├── migrations/         # SQL - migrations for db │   ├── package.json │   ├── Dockerfile │   └── .env.example ├── terraform/ │   ├── main.tf              # provider, VM, firewall, service account │   ├── variables.tf │   ├── outputs.tf │   └── terraform.tfvars.example ├── docker-compose.yml ├── .gitignore └── README.md",
-  "main": "settings.js",
+  "description": "Telegram bot for generating AI-powered summaries of DiliRock festival chats.",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,13 +10,26 @@
     "type": "git",
     "url": "git+https://github.com/arsenhuman/DiliPunk-TelegramBot.git"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "telegram",
+    "bot",
+    "telegraf",
+    "openai",
+    "gpt",
+    "summary",
+    "dilirock"
+  ],
+  "author": "Arsen Begijanyan",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/arsenhuman/DiliPunk-TelegramBot/issues"
   },
   "homepage": "https://github.com/arsenhuman/DiliPunk-TelegramBot#readme",
   "dependencies": {
+    "fs": "^0.0.1-security",
+    "openai": "^6.44.0",
+    "path": "^0.12.7",
+    "pg": "^8.22.0",
     "telegraf": "^4.16.3"
   }
 }

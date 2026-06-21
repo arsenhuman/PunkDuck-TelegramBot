@@ -6,6 +6,8 @@ COPY package*.json ./
 
 RUN npm install
 
+COPY settings.js ./
+
 COPY src ./src
 
 COPY migrations ./migrations
