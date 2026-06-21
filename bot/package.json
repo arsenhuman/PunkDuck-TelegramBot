@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/arsenhuman/DiliPunk-TelegramBot#readme",
   "dependencies": {
+    "dotenv": "^17.4.2",
     "fs": "^0.0.1-security",
     "openai": "^6.44.0",
     "path": "^0.12.7",
