@@ -1,0 +1,22 @@
+{
+  "name": "dilipunk",
+  "version": "1.0.0",
+  "description": "dilirock-bot/ \\n ├── bot/                    # bot code │   ├── src/ │   │   ├── index.js        # entrypoint. start Telegraf │   │   ├── db.js           # psql connection. requests │   │   ├── summarize.js    # API calls (OpenAI) │   │   └── handlers.js     # handlers │   ├── migrations/         # SQL - migrations for db │   ├── package.json │   ├── Dockerfile │   └── .env.example ├── terraform/ │   ├── main.tf              # provider, VM, firewall, service account │   ├── variables.tf │   ├── outputs.tf │   └── terraform.tfvars.example ├── docker-compose.yml ├── .gitignore └── README.md",
+  "main": "settings.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arsenhuman/DiliPunk-TelegramBot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arsenhuman/DiliPunk-TelegramBot/issues"
+  },
+  "homepage": "https://github.com/arsenhuman/DiliPunk-TelegramBot#readme",
+  "dependencies": {
+    "telegraf": "^4.16.3"
+  }
+}

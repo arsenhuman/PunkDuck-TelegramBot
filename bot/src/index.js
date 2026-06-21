@@ -1,7 +1,7 @@
 
 require('dotenv').config();
  
-const SETTINGS = require('../../settings');
+const SETTINGS = require('../settings');
 
 const { Telegraf } = require('telegraf');
 const { registerHandlers } = require('./handlers');

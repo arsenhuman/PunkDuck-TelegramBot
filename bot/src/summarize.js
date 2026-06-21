@@ -1,4 +1,4 @@
-const SETTINGS = require("../../settings");
+const SETTINGS = require("../settings");
 
 const OpenAI = require("openai");
 
