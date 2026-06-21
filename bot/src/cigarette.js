@@ -9,8 +9,8 @@
 const db = require('./db');
 const { BOT_MESSAGES } = require('./messages');
 
-// 1 in 200 chance for every regular message in the chat.
-const CIGARETTE_CHANCE = 1 / 200;
+// 1 in 100 chance for every regular message in the chat.
+const CIGARETTE_CHANCE = 1 / 80;
 
 // Unique callback_data prefix used to distinguish this button from
 // any other inline buttons the bot may have in the future.
