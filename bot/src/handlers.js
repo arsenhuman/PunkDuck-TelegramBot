@@ -11,7 +11,6 @@ const DEFAULT_PERIOD_HOURS = 24;
 
 
 function registerHandlers(bot) {
-    // Логируем КАЖДОЕ сообщение в чате (требует выключенного privacy mode у бота).
     bot.on('message', async (ctx, next) => {
         try {
             await logIncomingMessage(ctx);
@@ -70,9 +69,7 @@ async function logIncomingMessage(ctx) {
     });
 }
  
-/**
- * Определяет тип сообщения и достаёт текст/caption — единообразно для текстов и вложений.
- */
+
 function extractContent(msg) {
     if (msg.text) return { messageType: 'text', textContent: msg.text };
     if (msg.photo) return { messageType: 'photo', textContent: msg.caption ?? null };
@@ -94,7 +91,7 @@ async function handleSummaryCommand(ctx) {
     const periodStart = await resolvePeriodStart(chatId, periodArg);
     const periodEnd = new Date();
  
-    await ctx.reply('Собираю выжимку, секунду…');
+    await ctx.reply(BOT_MESSAGES.summaryInProgress());
  
     const messages = await db.getMessagesSince(chatId, periodStart);
     const { summaryText, modelUsed, messagesUsed } = await generateSummary(messages);
@@ -110,11 +107,17 @@ async function handleSummaryCommand(ctx) {
     });
  
     const periodLabel = formatPeriodLabel(periodStart, periodEnd);
-    await ctx.reply(`📋 Выжимка ${periodLabel} (${messages.length} сообщ.):\n\n${summaryText}`, {
-        reply_to_message_id: ctx.message.message_id,
-    });
+    await ctx.reply(
+        BOT_MESSAGES.summaryResult({ periodLabel, messageCount: messages.length, summaryText }),
+        { reply_to_message_id: ctx.message.message_id }
+    );
 }
  
+/**
+ * Определяет начало периода для выжимки:
+ * - "/summary 6h" / "/summary 3d" — явный период
+ * - "/summary" без аргумента — с момента последней выжимки, либо DEFAULT_PERIOD_HOURS, если выжимок ещё не было
+ */
 async function resolvePeriodStart(chatId, periodArg) {
     if (periodArg) {
         const parsed = parsePeriodArg(periodArg);
@@ -127,6 +130,9 @@ async function resolvePeriodStart(chatId, periodArg) {
     return new Date(Date.now() - DEFAULT_PERIOD_HOURS * 60 * 60 * 1000);
 }
  
+/**
+ * Парсит строки вида "6h", "3d", "30m" в миллисекунды. Возвращает null, если формат не распознан.
+ */
 function parsePeriodArg(arg) {
     const match = /^(\d+)([hdm])$/.exec(arg.trim().toLowerCase());
     if (!match) return null;
