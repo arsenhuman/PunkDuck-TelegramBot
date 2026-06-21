@@ -88,10 +88,31 @@ async function getLastSummaryTime(chatId) {
     return rows[0]?.period_end ?? null;
 }
  
+
+async function createCigaretteRequest({ chatId, botMsgId }) {
+    await pool.query(
+        `INSERT INTO cigarette_events (chat_id, bot_msg_id) VALUES ($1, $2)`,
+        [chatId, botMsgId]
+    );
+}
+
+
+async function tryGiveCigarette({ chatId, botMsgId, userId, firstName }) {
+    const { rowCount } = await pool.query(
+        `UPDATE cigarette_events
+         SET given_by_user_id = $3, given_by_first_name = $4, given_at = now()
+         WHERE chat_id = $1 AND bot_msg_id = $2 AND given_by_user_id IS NULL`,
+        [chatId, botMsgId, userId, firstName]
+    );
+    return rowCount === 1;
+}
+
+
 async function closePool() {
     await pool.end();
 }
  
+
 module.exports = {
     pool,
     upsertChat,
@@ -99,5 +120,7 @@ module.exports = {
     getMessagesSince,
     saveSummary,
     getLastSummaryTime,
+    createCigaretteRequest,
+    tryGiveCigarette,
     closePool,
 };
