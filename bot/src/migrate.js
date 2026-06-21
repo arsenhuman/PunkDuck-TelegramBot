@@ -30,12 +30,12 @@ async function runMigrations() {
  
     for (const file of files) {
         if (applied.has(file)) {
-            console.log(`[migrate] Пропускаю ${file} (уже применена)`);
+            console.log(`[migrate] Skipping ${file} (already applied)`);
             continue;
         }
  
         const sql = fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf8');
-        console.log(`[migrate] Применяю ${file}...`);
+        console.log(`[migrate] Applying ${file}...`);
  
         const client = await pool.connect();
         try {
@@ -43,22 +43,22 @@ async function runMigrations() {
             await client.query(sql);
             await client.query('INSERT INTO schema_migrations (filename) VALUES ($1)', [file]);
             await client.query('COMMIT');
-            console.log(`[migrate] ✓ ${file} применена`);
+            console.log(`[migrate] ✓ ${file} applied successfully.`);
         } catch (err) {
             await client.query('ROLLBACK');
-            throw new Error(`Миграция ${file} провалилась: ${err.message}`);
+            throw new Error(`Migration ${file} failed: ${err.message}`);
         } finally {
             client.release();
         }
     }
  
-    console.log('[migrate] Все миграции применены.');
+    console.log('[migrate] All migrations applied.');
 }
  
 if (require.main === module) {
     runMigrations()
         .catch((err) => {
-            console.error('[migrate] Ошибка:', err.message);
+            console.error('[migrate] Error:', err.message);
             process.exitCode = 1;
         })
         .finally(() => closePool());
