@@ -1,8 +1,13 @@
 const db = require('./db');
 const SETTINGS = require('../settings');
-const summarize = require('./summarize');
+
+const { generateSummary } = require('./summarize');
+const { BOT_MESSAGES } = require('./messages');
+const { shouldRequestCigarette, requestCigarette, registerCigaretteHandlers } = require('./cigarette');
+ 
 
 const DEFAULT_PERIOD_HOURS = 24;
+
 
 
 function registerHandlers(bot) {
@@ -13,29 +18,32 @@ function registerHandlers(bot) {
         } catch (err) {
             console.error('[handlers] Не удалось сохранить сообщение:', err);
         }
+ 
+        if (shouldRequestCigarette()) {
+            try {
+                await requestCigarette(ctx);
+            } catch (err) {
+                console.error('[handlers] Не удалось отправить запрос на сигарету:', err);
+            }
+        }
+ 
         return next();
     });
+ 
+    registerCigaretteHandlers(bot);
  
     bot.command('summary', async (ctx) => {
         try {
             await handleSummaryCommand(ctx);
         } catch (err) {
             console.error('[handlers] Ошибка при генерации выжимки:', err);
-            await ctx.reply('Не получилось сделать выжимку — что-то пошло не так. Попробуй ещё раз чуть позже.');
+            await ctx.reply(BOT_MESSAGES.summaryError());
         }
     });
  
-    bot.command('start', (ctx) =>
-        ctx.reply(
-            'Привет! Я бот DiliRock 🎸\n\n' +
-            'Я тихо записываю сообщения в этом чате, а по команде /summary делаю краткую выжимку.\n\n' +
-            'Примеры:\n' +
-            '/summary — выжимка с прошлого раза (или за последние 24ч, если выжимок ещё не было)\n' +
-            '/summary 6h — выжимка за последние 6 часов\n' +
-            '/summary 3d — выжимка за последние 3 дня'
-        )
-    );
+    bot.command('start', (ctx) => ctx.reply(BOT_MESSAGES.start()));
 }
+
  
 async function logIncomingMessage(ctx) {
     const msg = ctx.message;
