@@ -17,6 +17,10 @@ const DEFAULT_PERIOD_HOURS = 24;
 
 function registerHandlers(bot) {
     bot.on('message', async (ctx, next) => {
+
+        if (ctx.message?.text?.startsWith('/')) return next();
+
+
         try {
             await logIncomingMessage(ctx);
         } catch (err) {
