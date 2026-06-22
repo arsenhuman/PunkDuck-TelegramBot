@@ -2,6 +2,8 @@ const db = require('./db');
 const SETTINGS = require('../settings');
 
 const { getRandomJoke } = require('./jokes');
+const { shouldRandomBully, randomBully, handleRoast, handleReply } = require('./bully');
+
 
 const { generateSummary } = require('./summarize');
 const { BOT_MESSAGES } = require('./messages');
