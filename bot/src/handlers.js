@@ -3,6 +3,7 @@ const SETTINGS = require('../settings');
 
 const { getRandomJoke } = require('./jokes');
 const { shouldRandomBully, randomBully, handleRoast, handleReply } = require('./bully');
+const { getRandomMeme } = require('./media');
 
 
 const { generateSummary } = require('./summarize');
@@ -50,6 +51,15 @@ function registerHandlers(bot) {
     });
 
     registerCigaretteHandlers(bot);
+
+    bot.command('someshit', async (ctx) => {
+    const meme = getRandomMeme();
+    if (!meme) {
+        await ctx.reply('мемов нет. как и смысла.');
+        return;
+    }
+    await ctx.replyWithPhoto({ source: meme });
+});
 
     bot.command('roast', async (ctx) => {
         try { await handleRoast(ctx); } catch (err) {
