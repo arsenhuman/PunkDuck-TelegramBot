@@ -87,15 +87,15 @@ function extractContent(msg) {
 async function handleSummaryCommand(ctx) {
     const chatId = ctx.chat.id;
     const periodArg = ctx.message.text.split(' ')[1]; // например "/summary 6h" -> "6h"
- 
-    const periodStart = await resolvePeriodStart(chatId, periodArg);
+
+    const { periodStart, isCheckpoint } = await resolvePeriodStart(chatId, periodArg);
     const periodEnd = new Date();
- 
+
     await ctx.reply(BOT_MESSAGES.summaryInProgress());
- 
+
     const messages = await db.getMessagesSince(chatId, periodStart);
     const { summaryText, modelUsed, messagesUsed } = await generateSummary(messages);
- 
+
     await db.saveSummary({
         chatId,
         requestedBy: ctx.from?.id ?? null,
@@ -104,8 +104,9 @@ async function handleSummaryCommand(ctx) {
         messageCount: messagesUsed,
         summaryText,
         modelUsed,
+        isCheckpoint,
     });
- 
+
     const periodLabel = formatPeriodLabel(periodStart, periodEnd);
     await ctx.reply(
         BOT_MESSAGES.summaryResult({ periodLabel, messageCount: messages.length, summaryText }),
@@ -121,13 +122,13 @@ async function handleSummaryCommand(ctx) {
 async function resolvePeriodStart(chatId, periodArg) {
     if (periodArg) {
         const parsed = parsePeriodArg(periodArg);
-        if (parsed) return new Date(Date.now() - parsed);
+        if (parsed) return { periodStart: new Date(Date.now() - parsed), isCheckpoint: false };
     }
- 
+
     const lastSummaryTime = await db.getLastSummaryTime(chatId);
-    if (lastSummaryTime) return lastSummaryTime;
- 
-    return new Date(Date.now() - DEFAULT_PERIOD_HOURS * 60 * 60 * 1000);
+    if (lastSummaryTime) return { periodStart: lastSummaryTime, isCheckpoint: true };
+
+    return { periodStart: new Date(Date.now() - DEFAULT_PERIOD_HOURS * 60 * 60 * 1000), isCheckpoint: true };
 }
  
 /**

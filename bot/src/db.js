@@ -13,7 +13,7 @@ const pool = new Pool({
 
 pool.on('error', (err, client) => {
     console.error('Unexpected error on idle client', err);
-    process.exit(-1);
+    //process.exit(-1);
 });
 
 async function upsertChat({ chatId, title, chatType }) {
@@ -72,22 +72,23 @@ async function getMessagesSince(chatId, sinceDate) {
 }
 
 
-async function saveSummary({ chatId, requestedBy, periodStart, periodEnd, messageCount, summaryText, modelUsed }) {
+async function saveSummary({ chatId, requestedBy, periodStart, periodEnd, messageCount, summaryText, modelUsed, isCheckpoint }) {
     await pool.query(
-        `INSERT INTO summaries (chat_id, requested_by, period_start, period_end, message_count, summary_text, model_used)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [chatId, requestedBy, periodStart, periodEnd, messageCount, summaryText, modelUsed]
+        `INSERT INTO summaries (chat_id, requested_by, period_start, period_end, message_count, summary_text, model_used, is_checkpoint)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [chatId, requestedBy, periodStart, periodEnd, messageCount, summaryText, modelUsed, isCheckpoint]
     );
 }
  
 async function getLastSummaryTime(chatId) {
     const { rows } = await pool.query(
-        `SELECT period_end FROM summaries WHERE chat_id = $1 ORDER BY created_at DESC LIMIT 1`,
+        `SELECT period_end FROM summaries
+         WHERE chat_id = $1 AND is_checkpoint = true
+         ORDER BY period_end DESC LIMIT 1`,
         [chatId]
     );
     return rows[0]?.period_end ?? null;
 }
- 
 
 async function createCigaretteRequest({ chatId, botMsgId }) {
     await pool.query(
