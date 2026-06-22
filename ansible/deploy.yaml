@@ -1,0 +1,6 @@
+- name: deploy punkduck
+  hosts: punkduck
+  become: yes
+
+  roles:
+    - punkduck
