@@ -3,4 +3,4 @@ node_modules
 package-lock.json
 bot/node_modules
 bot/package-lock.json
-bot/media/memes
+bot/media/memes/*
