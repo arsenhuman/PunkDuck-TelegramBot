@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const MEDIA_DIR = path.join(__dirname, '../../media/memes');
+const MEDIA_DIR = path.join(__dirname, '../media/memes');
 
 function getRandomMeme() {
     if (!fs.existsSync(MEDIA_DIR)) return null;
