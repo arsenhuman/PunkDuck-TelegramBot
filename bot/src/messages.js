@@ -11,7 +11,7 @@ const BOT_MESSAGES = {
         'вот что я умею короче\n\n' +
         '/summary — что было с последней выжимки \n' +
         '/summary 6 — за последние 6 часов\n' +
-        '/summary 24 — за последние 24 часа\n' +,
+        '/summary 24 — за последние 24 часа\n',
 
     summaryInProgress: () => {
         const phrases = [
