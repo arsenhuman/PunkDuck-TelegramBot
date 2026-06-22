@@ -1,6 +1,8 @@
 const db = require('./db');
 const SETTINGS = require('../settings');
 
+const { getRandomJoke } = require('./jokes');
+
 const { generateSummary } = require('./summarize');
 const { BOT_MESSAGES } = require('./messages');
 const { shouldRequestCigarette, requestCigarette, registerCigaretteHandlers } = require('./cigarette');
@@ -40,6 +42,10 @@ function registerHandlers(bot) {
         }
     });
  
+    bot.command('joke', (ctx) => {
+        ctx.reply(getRandomJoke());
+    });
+
     bot.command('start', (ctx) => ctx.reply(BOT_MESSAGES.start()));
 }
 
