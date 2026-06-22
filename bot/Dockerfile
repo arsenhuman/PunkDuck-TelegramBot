@@ -12,6 +12,10 @@ COPY src ./src
 
 COPY migrations ./migrations
 
+COPY content ./content
+
+COPY media ./media
+
 USER node
 
 CMD ["node", "src/index.js"]
