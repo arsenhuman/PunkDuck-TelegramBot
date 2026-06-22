@@ -21,7 +21,23 @@ function registerHandlers(bot) {
         } catch (err) {
             console.error('[handlers] Не удалось сохранить сообщение:', err);
         }
- 
+
+        const isReplyToBot = ctx.message?.reply_to_message?.from?.id === ctx.botInfo.id;
+        if (isReplyToBot) {
+            try { await handleReply(ctx); } catch (err) {
+                console.error('[handlers] ошибка reply:', err);
+            }
+            return next();
+        }
+
+        if (shouldRandomBully()) {
+            try { await randomBully(ctx); } catch (err) {
+                console.error('[handlers] ошибка random bully:', err);
+            }
+            return next();
+        }
+
+    
         if (shouldRequestCigarette()) {
             try {
                 await requestCigarette(ctx);
@@ -29,12 +45,19 @@ function registerHandlers(bot) {
                 console.error('[handlers] Не удалось отправить запрос на сигарету:', err);
             }
         }
- 
+
         return next();
     });
- 
+
     registerCigaretteHandlers(bot);
- 
+
+    bot.command('roast', async (ctx) => {
+        try { await handleRoast(ctx); } catch (err) {
+            console.error('[handlers] ошибка roast:', err);
+            await ctx.reply('сломалось. не моя вина.');
+        }
+    });
+
     bot.command('summary', async (ctx) => {
         try {
             await handleSummaryCommand(ctx);
@@ -43,7 +66,7 @@ function registerHandlers(bot) {
             await ctx.reply(BOT_MESSAGES.summaryError());
         }
     });
- 
+
     bot.command('joke', (ctx) => {
         ctx.reply(getRandomJoke());
     });
