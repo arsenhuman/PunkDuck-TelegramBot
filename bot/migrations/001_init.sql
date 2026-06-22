@@ -1,5 +1,5 @@
 
--- Миграция 001 - инициализация схемы базы данных
+-- Migration script to initialize the database schema for the Telegram summarization bot.
 
 CREATE TABLE IF NOT EXISTS chats (
     chat_id     BIGINT PRIMARY KEY,
