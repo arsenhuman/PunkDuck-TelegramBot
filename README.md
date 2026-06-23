@@ -73,7 +73,7 @@ punkduck/
 │   ├── migrations/                         # versioned SQL migrations
 │   │   ├── 001_init.sql    
 │   │   ├── 002_cigarette_event.sql
-│   │   └──  003_checkpoint_summaries.sql
+│   │   └── 003_checkpoint_summaries.sql
 │   ├── settings.js                         # centralized env var loading
 │   ├── Dockerfile
 │   └── package.json
