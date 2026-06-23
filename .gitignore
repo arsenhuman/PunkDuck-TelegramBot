@@ -4,3 +4,4 @@ package-lock.json
 bot/node_modules
 bot/package-lock.json
 ansible/inventory.ini
+bot/media/memes
