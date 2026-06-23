@@ -57,21 +57,24 @@ punkduck/
 │               └── deploy_bot.yml
 ├── bot/
 │   ├── src/
-│   │   ├── index.js        # entrypoint, starts Telegraf
-│   │   ├── db.js           # PostgreSQL connection & queries
-│   │   ├── handlers.js     # message/command handlers
-│   │   ├── summarize.js    # OpenAI summary generation
-│   │   ├── messages.js     # all user-facing bot text in one place
-│   │   ├── cigarette.js    # the cigarette-request feature
-│   │   ├── jokes.js        # joke library feature
-│   │   ├── media.js        # meme image feature
-│   │   └── bully.js        # random roast/punchline feature
+│   │   ├── index.js          # entrypoint, starts Telegraf
+│   │   ├── db.js             # PostgreSQL connection & queries
+│   │   ├── handlers.js       # message/command handlers
+│   │   ├── summarize.js      # OpenAI summary generation
+│   │   ├── messages.js       # all user-facing bot text in one place
+│   │   ├── cigarette.js      # the cigarette-request feature
+│   │   ├── jokes.js          # joke library feature
+│   │   ├── media.js          # meme image feature
+│   │   └── bully.js          # random roast/punchline feature
 │   ├── content/
-│   │   └── jokes.json      # joke text data
+│   │   └── jokes.json                      # joke text data
 │   ├── media/
-│   │   └── memes/          # meme image files
-│   ├── migrations/         # versioned SQL migrations
-│   ├── settings.js         # centralized env var loading
+│   │   └── memes/                          # meme image files
+│   ├── migrations/                         # versioned SQL migrations
+│   │   ├── 001_init.sql    
+│   │   ├── 002_cigarette_event.sql
+│   │   └──  003_checkpoint_summaries.sql
+│   ├── settings.js                         # centralized env var loading
 │   ├── Dockerfile
 │   └── package.json
 ├── terraform/                  # GCP provisioning — work in progress
