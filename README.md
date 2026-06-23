@@ -25,9 +25,9 @@ loop.
 - **😂 Jokes & memes** — a library of jokes and meme images the bot can drop into the chat
 - **😈 Bully mode** — roughly 1 in 100 messages gets roasted with a prepared punchline, picked at
   random
-- Fully containerized with **Docker Compose** (bot + PostgreSQL)
-- SQL migrations tracked and applied explicitly, no auto-magic on startup
-- **One-command deployment via Ansible** to any server you already have (VPS or otherwise) —
+- **🐳 Fully containerized** with **Docker Compose** (bot + PostgreSQL)
+- **🧱 SQL migrations** tracked and applied explicitly, no auto-magic on startup
+- **🚀 One-command deployment via Ansible** to any server you already have (VPS or otherwise) —
   just SSH access and an IP
 
 ## 💻 Tech stack
@@ -41,7 +41,7 @@ loop.
 | Deployment | Ansible (any server with SSH) |
 | Infra-as-code | Terraform for GCP — **in progress** |
 
-## Project structure
+## 🗂️ Project structure
 
 ```
 punkduck/
@@ -79,9 +79,9 @@ punkduck/
 └── .env.example
 ```
 
-## Getting started
+## 🚦 Getting started
 
-### 0. Create the bot on Telegram (one-time)
+### 🤖 0. Create the bot on Telegram (one-time)
 
 1. Open [@BotFather](https://t.me/BotFather), send `/newbot`, follow the prompts. Save the
    token — that's your `BOT_TOKEN`.
@@ -94,7 +94,7 @@ punkduck/
 
 3. Add the bot to the target group as a regular member.
 
-### 1. Configure environment variables
+### 🔐 1. Configure environment variables
 
 ```bash
 cp .env.example .env
@@ -128,7 +128,7 @@ have, or a **manual Docker Compose** setup if you'd rather run it yourself.
 
 ---
 
-### Option A — Deploy with Ansible (recommended)
+### 🚀 Option A — Deploy with Ansible (recommended)
 
 If you have a server (any VPS or VM) with an IP address and SSH access, Ansible handles
 everything: installing Docker, pulling the code, and bringing the stack up.
@@ -159,7 +159,7 @@ everything: installing Docker, pulling the code, and bringing the stack up.
 
 ---
 
-### Option B — Manual Docker Compose
+### 🐳 Option B — Manual Docker Compose
 
 If you'd rather run things by hand (or you're developing locally):
 
@@ -196,7 +196,7 @@ You should see the bot report it's running. Send `/start` to it in Telegram to c
 
 ---
 
-## Updating a running deployment
+## 🔄 Updating a running deployment
 
 **Via Ansible:**
 ```bash
@@ -211,7 +211,7 @@ docker compose run --rm migrate   # only if new migration files were added
 docker compose up -d bot
 ```
 
-## Database backups
+## 🗄️ Database backups
 
 Postgres data lives in a Docker named volume, which survives container restarts but not a lost
 disk. A manual dump:
@@ -222,12 +222,12 @@ docker compose exec postgres pg_dump -U $PGUSER $PGDATABASE > backup_$(date +%F)
 
 Automating this (e.g. via cron + upload to a cloud bucket) is on the roadmap.
 
-## Roadmap
+## 🛣️ Roadmap
 
 - [ ] Terraform module to provision a GCP VM end-to-end (in progress)
 - [ ] Secret management beyond plain `.env` files
 - [ ] More bot personality features
 
-## License
+## 📄 License
 
 MIT
