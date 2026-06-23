@@ -10,7 +10,7 @@ meme or a joke, or roasts a random message with a prepared punchline. Because or
 festival is stressful and a punk duck deserves to have some fun while keeping everyone in the
 loop.
 
-## Features
+## 🔮 Features
 
 - **`/summary`** — generates a digest of the chat using OpenAI's API
   - `/summary` — since the last checkpoint summary (or last 24h if none exist yet). This call
@@ -30,7 +30,7 @@ loop.
 - **One-command deployment via Ansible** to any server you already have (VPS or otherwise) —
   just SSH access and an IP
 
-## Tech stack
+## 💻 Tech stack
 
 | Layer | Choice |
 |---|---|
@@ -103,13 +103,21 @@ cp .env.example .env
 Fill in:
 
 ```env
+# --- BOT ---
 BOT_TOKEN=your_botfather_token
 OPENAI_API_KEY=your_openai_key
 OPENAI_MODEL=gpt-4o-mini
 
 PGUSER=punkduck
-PGPASSWORD=choose_a_password
-PGDATABASE=punkduck
+PGPASSWORD=choose_a_secure_password
+PGDATABASE=dilirockarchive
+
+
+# --- Ansible ---
+SERVER_IP=your_server_ip
+SERVER_USER=ubuntu
+SSH_KEY_PATH=~/.ssh/id_rsa
+
 ```
 
 > Don't wrap values in quotes — `BOT_TOKEN=abc123`, not `BOT_TOKEN="abc123"`. Also don't add
