@@ -184,7 +184,7 @@ async function resolvePeriodStart(chatId, periodArg) {
  * Парсит строки вида "6h", "3d", "30m" в миллисекунды. Возвращает null, если формат не распознан.
  */
 function parsePeriodArg(arg) {
-    const match = /^(\d+)([hdm])$/.exec(arg.trim().toLowerCase());
+    const match = /^(\d+)([hdm])?$/.exec(arg.trim().toLowerCase());
     if (!match) return null;
  
     const value = Number(match[1]);
