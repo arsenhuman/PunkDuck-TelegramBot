@@ -7,7 +7,7 @@
 
 - name: copy .env file to server
   copy:
-    src: "{{ playbook_dir }}/../.env"   # берёт .env из корня репо на локальной машине
+    src: "{{ playbook_dir }}/../.env"
     dest: /opt/punkduck/.env
     mode: '0600'
 
