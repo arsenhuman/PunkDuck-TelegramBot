@@ -1,6 +1,9 @@
 const db = require('./db');
 const SETTINGS = require('../settings');
 
+const { resolveTenant } = require('./resolveTenant');
+
+
 const { getRandomJoke } = require('./jokes');
 const { shouldRandomBully, randomBully, handleRoast, handleReply } = require('./bully');
 const { getRandomMeme } = require('./media');
@@ -100,6 +103,8 @@ async function logIncomingMessage(ctx) {
         chatType: chat.type,
     });
  
+    await resolveTenant(chat.id);
+
     const { messageType, textContent } = extractContent(msg);
  
     await db.saveMessage({
