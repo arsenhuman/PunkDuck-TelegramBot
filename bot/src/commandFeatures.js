@@ -10,7 +10,7 @@
 //     mutually exclusive per message, gated inline in handlers.js instead.
 //   - summary — needs a usage-limit check (checkUsageLimit), not just
 //     enabled/disabled, so it stays as its own bot.command() for now.
-//   - start — always available, not a gated feature.
+//   - start — always available, not a ga feature.
 
 const { getRandomJoke } = require('./jokes');
 const { getRandomMeme } = require('./media');

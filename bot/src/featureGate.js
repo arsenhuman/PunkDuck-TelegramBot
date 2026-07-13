@@ -34,7 +34,7 @@ async function checkUsageLimit(chatId, limitKey) {
     const tenant = await resolveTenant(chatId);
     const limit = tenant.usageLimits?.[limitKey];
     if (limit === null || limit === undefined) return { allowed: true, limit: null };
-    // TODO(billing step): count actual usage today and compare against `limit`.
+    // TODO(billing step): actual usage today and compare against `limit`.
     return { allowed: true, limit };
 }
 
