@@ -5,7 +5,7 @@ const SETTINGS = require('../settings');
 
 const { Telegraf } = require('telegraf');
 const { registerHandlers } = require('./handlers');
-const { closePool } = require('./db');
+const { closePool } = require('./core/db');
  
 const BOT_TOKEN = SETTINGS.BOT_TOKEN;
 if (!BOT_TOKEN) {
