@@ -1,13 +1,13 @@
-const db = require('./db');
+const db = require('./core/db');
 const SETTINGS = require('../settings');
 
-const { shouldRandomBully, randomBully, handleReply } = require('./bully');
-const { generateSummary } = require('./summarize');
-const { BOT_MESSAGES } = require('./messages');
-const { requestCigarette, registerCigaretteHandlers } = require('./cigarette');
-const { resolveTenant } = require('./resolveTenant');
-const { isFeatureEnabled, getFeatureConfig, checkUsageLimit } = require('./featureGate');
-const { COMMAND_FEATURES } = require('./commandFeatures');
+const { shouldRandomBully, randomBully, handleReply } = require('./features/bully');
+const { generateSummary } = require('./features/summary');
+const { BOT_MESSAGES } = require('./core/messages');
+const { requestCigarette, registerCigaretteHandlers } = require('./features/cigarette');
+const { resolveTenant } = require('./core/resolveTenant');
+const { isFeatureEnabled, getFeatureConfig, checkUsageLimit } = require('./core/featureGate');
+const { COMMAND_FEATURES } = require('./commandFeatureRegistry');
 
 const DEFAULT_PERIOD_HOURS = 24;
 
@@ -61,8 +61,8 @@ function registerHandlers(bot) {
     registerCigaretteHandlers(bot);
 
     // Independent command features (joke / someshit / roast): registered
-    // generically, gated by featureGate. Add/remove one in commandFeatures.js
-    // — nothing here needs to change.
+    // generically, gated by featureGate. Add/remove one in
+    // commandFeatureRegistry.js — nothing here needs to change.
     for (const { command, feature, handler } of COMMAND_FEATURES) {
         bot.command(command, async (ctx) => {
             if (!(await isFeatureEnabled(ctx.chat.id, feature))) return;
