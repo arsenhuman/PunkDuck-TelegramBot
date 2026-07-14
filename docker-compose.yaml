@@ -25,7 +25,7 @@ services:
       PGUSER: ${PGUSER}
       PGPASSWORD: ${PGPASSWORD}
       PGDATABASE: ${PGDATABASE}
-    command: ["node", "src/migrate.js"]
+    command: ["node", "src/core/migrate.js"]
     profiles: 
       - tools
 

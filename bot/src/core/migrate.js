@@ -1,10 +1,10 @@
-
 const fs = require('fs');
 const path = require('path');
 const { pool, closePool } = require('./db');
- 
-const MIGRATIONS_DIR = path.join(__dirname, '..', 'migrations');
- 
+
+// bot/src/core/migrate.js -> up two levels to bot/, then into migrations/
+const MIGRATIONS_DIR = path.join(__dirname, '..', '..', 'migrations');
+
 async function ensureMigrationsTable() {
     await pool.query(`
         CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -13,30 +13,30 @@ async function ensureMigrationsTable() {
         )
     `);
 }
- 
+
 async function getAppliedMigrations() {
     const { rows } = await pool.query('SELECT filename FROM schema_migrations');
     return new Set(rows.map((r) => r.filename));
 }
- 
+
 async function runMigrations() {
     await ensureMigrationsTable();
     const applied = await getAppliedMigrations();
- 
+
     const files = fs
         .readdirSync(MIGRATIONS_DIR)
         .filter((f) => f.endsWith('.sql'))
         .sort();
- 
+
     for (const file of files) {
         if (applied.has(file)) {
             console.log(`[migrate] Skipping ${file} (already applied)`);
             continue;
         }
- 
+
         const sql = fs.readFileSync(path.join(MIGRATIONS_DIR, file), 'utf8');
         console.log(`[migrate] Applying ${file}...`);
- 
+
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -51,10 +51,10 @@ async function runMigrations() {
             client.release();
         }
     }
- 
+
     console.log('[migrate] All migrations applied.');
 }
- 
+
 if (require.main === module) {
     runMigrations()
         .catch((err) => {
@@ -63,5 +63,5 @@ if (require.main === module) {
         })
         .finally(() => closePool());
 }
- 
+
 module.exports = { runMigrations };

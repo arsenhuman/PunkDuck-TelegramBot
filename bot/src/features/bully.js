@@ -1,5 +1,5 @@
 const OpenAI = require('openai');
-const SETTINGS = require('../settings');
+const SETTINGS = require('../../settings');
 
 const client = new OpenAI({ apiKey: SETTINGS.OPENAI_API_KEY });
 const MODEL = SETTINGS.OPENAI_MODEL || 'gpt-4o-mini';

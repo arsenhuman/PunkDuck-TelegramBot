@@ -1,5 +1,5 @@
 const { Pool } = require('pg');
-const SETTINGS = require('../settings');
+const SETTINGS = require('../../settings');
 
 
 const pool = new Pool({
@@ -47,7 +47,7 @@ async function saveMessage({
     );
 }
 
- 
+
 async function getMessagesSince(chatId, sinceDate) {
     const { rows } = await pool.query(
         `SELECT
@@ -79,7 +79,7 @@ async function saveSummary({ chatId, requestedBy, periodStart, periodEnd, messag
         [chatId, requestedBy, periodStart, periodEnd, messageCount, summaryText, modelUsed, isCheckpoint]
     );
 }
- 
+
 async function getLastSummaryTime(chatId) {
     const { rows } = await pool.query(
         `SELECT period_end FROM summaries
@@ -112,7 +112,7 @@ async function tryGiveCigarette({ chatId, botMsgId, userId, firstName }) {
 async function closePool() {
     await pool.end();
 }
- 
+
 
 module.exports = {
     pool,

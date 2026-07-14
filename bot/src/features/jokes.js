@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const JOKES_PATH = path.join(__dirname, '../content/jokes.json');
+// bot/src/features/jokes.js -> up two levels to bot/, then content/jokes.json
+const JOKES_PATH = path.join(__dirname, '../../content/jokes.json');
 const jokes = JSON.parse(fs.readFileSync(JOKES_PATH, 'utf-8'));
 
 function getRandomJoke() {
