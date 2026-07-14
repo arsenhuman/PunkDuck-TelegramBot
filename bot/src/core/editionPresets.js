@@ -44,7 +44,7 @@ const EDITION_PRESETS = {
     // Placeholder for the SaaS product — anyone can add the bot to their chat.
     // Personality features off by default (not every chat wants a bot asking
     // for cigarettes); summary is the core paid feature, rate-limited on the
-    // free tier. Real plan tiers/pricing come in step 5.
+    // free tier. Real plan tiers/pricing come in the billing step.
     saas: {
         language: 'ru',
         features: {
@@ -62,7 +62,7 @@ const EDITION_PRESETS = {
 
 // Edition assigned to a brand-new, never-seen-before chat. "general" is the
 // safe default for the SaaS-facing future — your DiliRock chat gets flagged
-// explicitly via a one-time UPDATE after the migration runs (see the SQL file).
+// explicitly via a one-time UPDATE after the migration runs.
 const DEFAULT_EDITION = 'general';
 
 module.exports = { EDITION_PRESETS, DEFAULT_EDITION };

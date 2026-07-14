@@ -4,9 +4,6 @@
 // this chat be doing?". Auto-creates a chat_settings row (edition='general')
 // on first contact, merges the edition preset with any per-chat overrides,
 // and caches the result briefly to avoid a DB round-trip on every message.
-//
-// Step 2 (featureGate.js) will build on top of this to answer
-// "is feature X enabled for this chat, and has it hit its usage limit?".
 
 const { EDITION_PRESETS, DEFAULT_EDITION } = require('./editionPresets');
 const { getTenantRow, insertTenantDefaults } = require('./tenantSettings');

@@ -6,10 +6,12 @@
 // 3. The first user to press the button "wins" — the button becomes unavailable for everyone else
 //    (enforced at the database level via UPDATE ... WHERE given_by_user_id IS NULL).
 
-const db = require('./db');
-const { BOT_MESSAGES } = require('./messages');
+const db = require('../core/db');
+const { BOT_MESSAGES } = require('../core/messages');
 
-// 1 in 100 chance for every regular message in the chat.
+// Note: the actual chance used at runtime now comes from the tenant's
+// resolved feature config (see featureGate.getFeatureConfig in handlers.js).
+// This constant remains only as a fallback for testing this module in isolation.
 const CIGARETTE_CHANCE = 1 / 50;
 
 // Unique callback_data prefix used to distinguish this button from
@@ -18,7 +20,7 @@ const CALLBACK_PREFIX = 'give_cigarette';
 
 /**
  * Determines whether the bot should ask for a cigarette now.
- * Called for every regular message from the main message handler.
+ * Kept for reference/testing — handlers.js drives this from tenant config now.
  */
 function shouldRequestCigarette() {
     return Math.random() < CIGARETTE_CHANCE;

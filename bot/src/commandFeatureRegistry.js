@@ -1,4 +1,4 @@
-// commandFeatures.js
+// commandFeatureRegistry.js
 //
 // Declares independent slash-command features as { command, feature, handler }.
 // handlers.js registers all of them in one loop and checks featureGate before
@@ -12,9 +12,9 @@
 //     enabled/disabled, so it stays as its own bot.command() for now.
 //   - start — always available, not a gated feature.
 
-const { getRandomJoke } = require('./jokes');
-const { getRandomMeme } = require('./media');
-const { handleRoast } = require('./bully');
+const { getRandomJoke } = require('./features/jokes');
+const { getRandomMeme } = require('./features/memes');
+const { handleRoast } = require('./features/bully');
 
 const COMMAND_FEATURES = [
     {
