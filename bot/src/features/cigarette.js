@@ -12,7 +12,7 @@ const { BOT_MESSAGES } = require('../core/messages');
 // Note: the actual chance used at runtime now comes from the tenant's
 // resolved feature config (see featureGate.getFeatureConfig in handlers.js).
 // This constant remains only as a fallback for testing this module in isolation.
-const CIGARETTE_CHANCE = 1 / 50;
+const CIGARETTE_CHANCE = 1 / 110;
 
 // Unique callback_data prefix used to distinguish this button from
 // any other inline buttons the bot may have in the future.
