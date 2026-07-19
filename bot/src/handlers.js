@@ -4,7 +4,6 @@ const SETTINGS = require('../settings');
 const { shouldRandomBully, randomBully, handleReply } = require('./features/bully');
 const { generateSummary } = require('./features/summary');
 const { requestCigarette, registerCigaretteHandlers } = require('./features/cigarette');
-const { handleFaqMention } = require('./features/faq');
 const { resolveTenant } = require('./core/resolveTenant');
 const { checkUsageLimit } = require('./core/featureGate');
 const { t } = require('./core/i18n');
@@ -54,16 +53,6 @@ function registerHandlers(bot) {
                 await requestCigarette(ctx, tenant);
             } catch (err) {
                 console.error('[handlers] Не удалось отправить запрос на сигарету:', err);
-            }
-        }
-
-        // FAQ: fires on @-mention, independent of the chain above. Silently
-        // no-ops internally if this message doesn't actually mention the bot.
-        if (tenant.features.faq?.enabled) {
-            try {
-                await handleFaqMention(ctx, tenant);
-            } catch (err) {
-                console.error('[handlers] ошибка faq:', err);
             }
         }
 
