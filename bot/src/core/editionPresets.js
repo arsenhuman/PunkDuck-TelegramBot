@@ -13,7 +13,7 @@ const EDITION_PRESETS = {
     dilirock: {
         language: 'ru',
         features: {
-            cigarette: { enabled: true, chance: 1 / 50 },
+            cigarette: { enabled: true, chance: 1 / 120 },
             bully: { enabled: true, minInterval: 70, jitter: 15 },
             jokes: { enabled: true },
             memes: { enabled: true },
@@ -30,7 +30,7 @@ const EDITION_PRESETS = {
     general: {
         language: 'ru',
         features: {
-            cigarette: { enabled: true, chance: 1 / 50 },
+            cigarette: { enabled: true, chance: 1 / 120 },
             bully: { enabled: true, minInterval: 70, jitter: 15 },
             jokes: { enabled: true },
             memes: { enabled: true },
