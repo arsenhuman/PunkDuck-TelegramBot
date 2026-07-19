@@ -1,31 +1,15 @@
 const OpenAI = require('openai');
 const SETTINGS = require('../../settings');
+const { t, getPrompt } = require('../core/i18n');
 
 const client = new OpenAI({ apiKey: SETTINGS.OPENAI_API_KEY });
 const MODEL = SETTINGS.OPENAI_MODEL || 'gpt-4o-mini';
-
-const BULLY_PROMPT = `Ты PunkDuck — саркастичная утка-панк в чате организаторов фестиваля.
-Отвечай максимум 1-2 предложения. Быкуй, но без злобы.
-Можешь подколоть, можешь послать, но по-панковски — с характером, не с ненавистью.
-Только русский язык. Никаких объяснений, никакой вежливости.`;
-
-const RANDOM_BULLY_PHRASES = [
-    'ну ты бы хоть с кем то посоветловался бы прежде чем писать такое',
-    'ахах я это пересылаю в наш ботовсем чат поугорать',
-    'окей. записал. всё ещё не понимаю зачем',
-    'это важное сообщение. очень.',
-    'чат стал богаче от этого сообщения.',
-    'я это сохранил в базу. жаль.',
-    'принято. проигнорировано.',
-    'ты бы следил за тем что пишешь. я же записываю всё.',
-
-];
 
 let messageCounter = 0;
 
 function shouldRandomBully() {
     messageCounter++;
-    // каждые ~50 сообщений, с небольшой случайностью чтобы не было предсказуемо
+    // каждые ~70-85 сообщений, с небольшой случайностью чтобы не было предсказуемо
     if (messageCounter >= 70 + Math.floor(Math.random() * 15)) {
         messageCounter = 0;
         return true;
@@ -33,22 +17,22 @@ function shouldRandomBully() {
     return false;
 }
 
-async function randomBully(ctx) {
+async function randomBully(ctx, tenant) {
     const firstName = ctx.message?.from?.first_name || 'чувак';
-    const phrase = RANDOM_BULLY_PHRASES[Math.floor(Math.random() * RANDOM_BULLY_PHRASES.length)];
+    const phrase = t(tenant, 'bullyRandomPhrases');
     await ctx.reply(`${firstName}, ${phrase}`, {
         reply_to_message_id: ctx.message.message_id,
     });
 }
 
-async function handleRoast(ctx) {
+async function handleRoast(ctx, tenant) {
     // берём текст реплая или аргумент команды
     const replyText = ctx.message?.reply_to_message?.text;
     const argText = ctx.message.text.split(' ').slice(1).join(' ');
     const target = replyText || argText;
 
     if (!target) {
-        await ctx.reply('на что roast-то? ответь на чьё-нибудь сообщение или напиши /roast <текст>');
+        await ctx.reply(t(tenant, 'roastNoTarget'));
         return;
     }
 
@@ -57,7 +41,7 @@ async function handleRoast(ctx) {
         max_tokens: 100,
         temperature: 0.9,
         messages: [
-            { role: 'system', content: BULLY_PROMPT },
+            { role: 'system', content: getPrompt(tenant, 'bully') },
             { role: 'user', content: `пройдись по этому сообщению: "${target}"` },
         ],
     });
@@ -66,7 +50,7 @@ async function handleRoast(ctx) {
     await ctx.reply(text, { reply_to_message_id: ctx.message.message_id });
 }
 
-async function handleReply(ctx) {
+async function handleReply(ctx, tenant) {
     const userText = ctx.message?.text;
     if (!userText) return;
 
@@ -77,7 +61,7 @@ async function handleReply(ctx) {
         max_tokens: 80,
         temperature: 0.9,
         messages: [
-            { role: 'system', content: BULLY_PROMPT },
+            { role: 'system', content: getPrompt(tenant, 'bully') },
             { role: 'user', content: `${firstName} пишет тебе: "${userText}"` },
         ],
     });

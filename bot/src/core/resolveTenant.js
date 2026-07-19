@@ -1,9 +1,19 @@
 // resolveTenant.js
 //
 // The single entrypoint the rest of the bot should use to answer "what should
-// this chat be doing?". Auto-creates a chat_settings row (edition='general')
-// on first contact, merges the edition preset with any per-chat overrides,
-// and caches the result briefly to avoid a DB round-trip on every message.
+// this chat be doing?". Auto-creates a chat_settings row on first contact,
+// merges the edition preset with any per-chat overrides, and caches the
+// result briefly to avoid a DB round-trip on every message.
+//
+// IMPORTANT: new rows are created with EMPTY features/usage_limits, not a
+// snapshot of the preset. This is deliberate — chat_settings.features is
+// meant to hold only per-chat *overrides* on top of the live edition preset.
+// If we stored a full copy of the preset at creation time, any later change
+// to editionPresets.js (e.g. disabling a feature for an edition) would
+// silently NOT apply to chats created before that change, because the old
+// stored snapshot would out-rank the new preset default in the merge below.
+// Keeping overrides empty by default means editionPresets.js changes apply
+// live to every chat that hasn't been explicitly customized.
 
 const { EDITION_PRESETS, DEFAULT_EDITION } = require('./editionPresets');
 const { getTenantRow, insertTenantDefaults } = require('./tenantSettings');
@@ -46,8 +56,8 @@ async function resolveTenant(chatId) {
             chatId,
             edition: DEFAULT_EDITION,
             language: preset.language,
-            features: preset.features,
-            usageLimits: preset.usageLimits,
+            features: {},     // no stored overrides — the live preset applies in full
+            usageLimits: {},
         });
         // Lost a race with a concurrent insert for the same chat — just re-read.
         if (!row) row = await getTenantRow(chatId);

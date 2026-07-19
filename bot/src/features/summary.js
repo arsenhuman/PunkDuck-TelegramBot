@@ -1,7 +1,6 @@
 const SETTINGS = require("../../settings");
-
 const OpenAI = require("openai");
-
+const { t, getPrompt } = require('../core/i18n');
 
 const client = new OpenAI({
   apiKey: SETTINGS.OPENAI_API_KEY,
@@ -10,49 +9,6 @@ const client = new OpenAI({
 const MODEL = SETTINGS.OPENAI_MODEL || "gpt-4o-mini";
 
 const MAX_MESSAGES = 200;
-
-const SYSTEM_PROMPT = `Ты PunkDuck. Саркастичная и циничная утка-панк, которая помогает организаторам фестиваля DiliRock быстро понимать суть обсуждений в их телеграм-чате.
-
-Характер: ты очень похож на персонажа дедпула 
-- саркастичный, материшься но не злой
-- ломаешь четвёртую стену когда уместно ("я просто бот но даже я вижу что...")
-- лёгкая ирония в подаче, но факты точные
-- панк-утка, которая не брезгует грязью, но при этом не переходит на личности
-- факты точные — под сарказмом скрывается нормальный дайджест
-
-Тебе дают список сообщений за период. Сделай краткую выжимку на русском.
-Структура выжимки — строго такая:
-
-🔥 *Ключевые темы*
-
-*[название темы] [эмодзи по смыслу]*
-"[2-4 предложения: что обсуждали, к чему пришли, кто что предложил. можно одну важную деталь или цитату]"
-
-*[следующая тема] [эмодзи]*
-"[содержание]"
-
-— тем может быть от 1 до 20, каждая отделена пустой строкой
-— название темы всегда жирное через *звёздочки*
-— содержание под названием, обычным текстом, в кавычках
-— эмодзи подбирай по смыслу: 🎸 музыка, 🚛 логистика, 💰 деньги, 🐛 техника, 🐈 животные и т.д.
-
-Если что-то решили, зависло или были ссылки — добавь после тем:
-
-✅ *Принятые решения*
-— [кратко что решили, кто отвечает]
-
-❓ *Открытые вопросы / дедлайны*
-— [что зависло или требует действия]
-
-🔗 *Важные ссылки/файлы*
-— [перечисли]
-
-Правила:
-- пустые разделы не пиши вообще
-- указывай имена когда важно
-- только суть, не пересказ
-- если за период были только стикеры, "ок", "спасибо" — напиши что существенного не было
-- учитывай reply_to: помогает понять контекст кто кому отвечал`;
 
 
 function formatMessage(row) {
@@ -87,10 +43,10 @@ function truncate(str, maxLen) {
 }
 
 
-async function generateSummary(messageRows) {
+async function generateSummary(messageRows, tenant) {
     if (messageRows.length === 0) {
         return {
-            summaryText: 'За выбранный период сообщений не было.',
+            summaryText: t(tenant, 'noMessagesInPeriod'),
             modelUsed: null,
             messagesUsed: 0,
         };
@@ -109,13 +65,13 @@ async function generateSummary(messageRows) {
     const response = await client.chat.completions.create({
         model: MODEL,
         messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
+            { role: 'system', content: getPrompt(tenant, 'summary') },
             { role: 'user', content: userPrompt },
         ],
         temperature: 0.3,
     });
 
-    const summaryText = response.choices[0]?.message?.content?.trim() || 'Не удалось сгенерировать выжимку.';
+    const summaryText = response.choices[0]?.message?.content?.trim() || t(tenant, 'emptyModelResponse');
 
     return {
         summaryText,

@@ -3,10 +3,11 @@ const SETTINGS = require('../settings');
 
 const { shouldRandomBully, randomBully, handleReply } = require('./features/bully');
 const { generateSummary } = require('./features/summary');
-const { BOT_MESSAGES } = require('./core/messages');
 const { requestCigarette, registerCigaretteHandlers } = require('./features/cigarette');
+const { handleFaqMention } = require('./features/faq');
 const { resolveTenant } = require('./core/resolveTenant');
-const { isFeatureEnabled, getFeatureConfig, checkUsageLimit } = require('./core/featureGate');
+const { checkUsageLimit } = require('./core/featureGate');
+const { t } = require('./core/i18n');
 const { COMMAND_FEATURES } = require('./commandFeatureRegistry');
 
 const DEFAULT_PERIOD_HOURS = 24;
@@ -22,36 +23,47 @@ function registerHandlers(bot) {
             console.error('[handlers] Не удалось сохранить сообщение:', err);
         }
 
+        const tenant = await resolveTenant(ctx.chat.id); // cached — cheap to call per message
+
         // reply-to-bot / random-bully / cigarette are mutually exclusive per
         // message (only one fires) — kept as an explicit priority chain
         // rather than a generic feature loop, since that mutual exclusivity
-        // doesn't fit "run every enabled feature". Each branch now checks
-        // featureGate instead of a hardcoded constant.
+        // doesn't fit "run every enabled feature".
 
         const isReplyToBot = ctx.message?.reply_to_message?.from?.id === ctx.botInfo.id;
 
         if (isReplyToBot) {
-            if (await isFeatureEnabled(ctx.chat.id, 'bully')) {
-                try { await handleReply(ctx); } catch (err) {
+            if (tenant.features.bully?.enabled) {
+                try { await handleReply(ctx, tenant); } catch (err) {
                     console.error('[handlers] ошибка reply:', err);
                 }
             }
             return next();
         }
 
-        if (await isFeatureEnabled(ctx.chat.id, 'bully') && shouldRandomBully()) {
-            try { await randomBully(ctx); } catch (err) {
+        if (tenant.features.bully?.enabled && shouldRandomBully()) {
+            try { await randomBully(ctx, tenant); } catch (err) {
                 console.error('[handlers] ошибка random bully:', err);
             }
             return next();
         }
 
-        const cigaretteConfig = await getFeatureConfig(ctx.chat.id, 'cigarette');
+        const cigaretteConfig = tenant.features.cigarette ?? { enabled: false };
         if (cigaretteConfig.enabled && Math.random() < (cigaretteConfig.chance ?? 0)) {
             try {
-                await requestCigarette(ctx);
+                await requestCigarette(ctx, tenant);
             } catch (err) {
                 console.error('[handlers] Не удалось отправить запрос на сигарету:', err);
+            }
+        }
+
+        // FAQ: fires on @-mention, independent of the chain above. Silently
+        // no-ops internally if this message doesn't actually mention the bot.
+        if (tenant.features.faq?.enabled) {
+            try {
+                await handleFaqMention(ctx, tenant);
+            } catch (err) {
+                console.error('[handlers] ошибка faq:', err);
             }
         }
 
@@ -61,38 +73,43 @@ function registerHandlers(bot) {
     registerCigaretteHandlers(bot);
 
     // Independent command features (joke / someshit / roast): registered
-    // generically, gated by featureGate. Add/remove one in
+    // generically, gated by the resolved tenant. Add/remove one in
     // commandFeatureRegistry.js — nothing here needs to change.
     for (const { command, feature, handler } of COMMAND_FEATURES) {
         bot.command(command, async (ctx) => {
-            if (!(await isFeatureEnabled(ctx.chat.id, feature))) return;
+            const tenant = await resolveTenant(ctx.chat.id);
+            if (!tenant.features[feature]?.enabled) return;
             try {
-                await handler(ctx);
+                await handler(ctx, tenant);
             } catch (err) {
                 console.error(`[handlers] ошибка в команде /${command}:`, err);
-                await ctx.reply('сломалось. не моя вина.');
+                await ctx.reply(t(tenant, 'genericError'));
             }
         });
     }
 
     bot.command('summary', async (ctx) => {
-        if (!(await isFeatureEnabled(ctx.chat.id, 'summary'))) return;
+        const tenant = await resolveTenant(ctx.chat.id);
+        if (!tenant.features.summary?.enabled) return;
 
         const { allowed } = await checkUsageLimit(ctx.chat.id, 'summaryCallsPerDay');
         if (!allowed) {
-            await ctx.reply('лимит выжимок на сегодня исчерпан.');
+            await ctx.reply(t(tenant, 'summaryLimitReached'));
             return;
         }
 
         try {
-            await handleSummaryCommand(ctx);
+            await handleSummaryCommand(ctx, tenant);
         } catch (err) {
             console.error('[handlers] Ошибка при генерации выжимки:', err);
-            await ctx.reply(BOT_MESSAGES.summaryError());
+            await ctx.reply(t(tenant, 'summaryError'));
         }
     });
 
-    bot.command('start', (ctx) => ctx.reply(BOT_MESSAGES.start()));
+    bot.command('start', async (ctx) => {
+        const tenant = await resolveTenant(ctx.chat.id);
+        await ctx.reply(t(tenant, 'start', { botUsername: ctx.botInfo.username }));
+    });
 }
 
 
@@ -139,17 +156,17 @@ function extractContent(msg) {
     return { messageType: 'other', textContent: null };
 }
 
-async function handleSummaryCommand(ctx) {
+async function handleSummaryCommand(ctx, tenant) {
     const chatId = ctx.chat.id;
     const periodArg = ctx.message.text.split(' ')[1]; // например "/summary 6h" -> "6h"
 
     const { periodStart, isCheckpoint } = await resolvePeriodStart(chatId, periodArg);
     const periodEnd = new Date();
 
-    await ctx.reply(BOT_MESSAGES.summaryInProgress());
+    await ctx.reply(t(tenant, 'summaryInProgress'));
 
     const messages = await db.getMessagesSince(chatId, periodStart);
-    const { summaryText, modelUsed, messagesUsed } = await generateSummary(messages);
+    const { summaryText, modelUsed, messagesUsed } = await generateSummary(messages, tenant);
 
     await db.saveSummary({
         chatId,
@@ -164,7 +181,7 @@ async function handleSummaryCommand(ctx) {
 
     const periodLabel = formatPeriodLabel(periodStart, periodEnd);
     await ctx.reply(
-        BOT_MESSAGES.summaryResult({ periodLabel, messageCount: messages.length, summaryText }),
+        t(tenant, 'summaryResult', { periodLabel, messageCount: messages.length, summaryText }),
         {
             reply_to_message_id: ctx.message.message_id,
             parse_mode: 'Markdown'
