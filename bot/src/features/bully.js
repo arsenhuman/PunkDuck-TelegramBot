@@ -5,15 +5,17 @@ const { t, getPrompt } = require('../core/i18n');
 const client = new OpenAI({ apiKey: SETTINGS.OPENAI_API_KEY });
 const MODEL = SETTINGS.OPENAI_MODEL || 'gpt-4o-mini';
 
-let messageCounter = 0;
+const messageCounters = new Map();
 
-function shouldRandomBully() {
-    messageCounter++;
-    // каждые ~70-85 сообщений, с небольшой случайностью чтобы не было предсказуемо
-    if (messageCounter >= 70 + Math.floor(Math.random() * 15)) {
-        messageCounter = 0;
+function shouldRandomBully(chatId, config) {
+    const { minInterval, jitter } = config;
+    const messageCounter = (messageCounters.get(chatId) ?? 0) + 1;
+    // Add a little randomness so the trigger is not predictable.
+    if (messageCounter >= minInterval + Math.floor(Math.random() * jitter)) {
+        messageCounters.delete(chatId);
         return true;
     }
+    messageCounters.set(chatId, messageCounter);
     return false;
 }
 

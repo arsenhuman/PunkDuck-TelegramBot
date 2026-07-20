@@ -40,7 +40,7 @@ function registerHandlers(bot) {
             return next();
         }
 
-        if (tenant.features.bully?.enabled && shouldRandomBully()) {
+        if (tenant.features.bully?.enabled && shouldRandomBully(ctx.chat.id, tenant.features.bully)) {
             try { await randomBully(ctx, tenant); } catch (err) {
                 console.error('[handlers] ошибка random bully:', err);
             }
