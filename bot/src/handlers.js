@@ -23,12 +23,17 @@ function registerHandlers(bot) {
             console.error('[handlers] Не удалось сохранить сообщение:', err);
         }
 
-        const tenant = await resolveTenant(ctx.chat.id); // cached — cheap to call per message
+        const tenant = await resolveTenant(ctx.chat.id);
 
-        // reply-to-bot / random-bully / cigarette are mutually exclusive per
-        // message (only one fires) — kept as an explicit priority chain
-        // rather than a generic feature loop, since that mutual exclusivity
-        // doesn't fit "run every enabled feature".
+        if (tenant.features.faq?.enabled && mentionsBot(ctx)) {
+            try {
+                await handleFaqQuestion(ctx, tenant);
+            } catch (err) {
+                console.error('[handlers] ошибка FAQ:', err);
+                await ctx.reply(t(tenant, 'faqAnswerError'));
+            }
+            return next();
+        }
 
         const isReplyToBot = ctx.message?.reply_to_message?.from?.id === ctx.botInfo.id;
 
@@ -77,6 +82,18 @@ function registerHandlers(bot) {
             }
         });
     }
+
+    bot.command('setfaq', async (ctx) => {
+        const tenant = await resolveTenant(ctx.chat.id);
+        if (!tenant.features.faq?.enabled) return;
+
+        try {
+            await handleSetFaq(ctx, tenant);
+        } catch (err) {
+            console.error('[handlers] ошибка /setfaq:', err);
+            await ctx.reply(t(tenant, 'genericError'));
+        }
+    });
 
     bot.command('summary', async (ctx) => {
         const tenant = await resolveTenant(ctx.chat.id);
