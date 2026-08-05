@@ -108,6 +108,23 @@ async function tryGiveCigarette({ chatId, botMsgId, userId, firstName }) {
     return rowCount === 1;
 }
 
+async function saveFaqDocument({ chatId, content, updatedBy }) {
+    await pool.query(
+        `INSERT INTO faq_documents (chat_id, content, updated_by, updated_at)
+         VALUES ($1, $2, $3, now())
+         ON CONFLICT (chat_id)
+         DO UPDATE SET content = EXCLUDED.content, updated_by = EXCLUDED.updated_by, updated_at = now()`,
+        [chatId, content, updatedBy]
+    );
+}
+
+async function getFaqDocument(chatId) {
+    const { rows } = await pool.query(
+        `SELECT content, updated_at FROM faq_documents WHERE chat_id = $1`,
+        [chatId]
+    );
+    return rows[0] ?? null;
+}
 
 async function closePool() {
     await pool.end();
@@ -124,4 +141,6 @@ module.exports = {
     createCigaretteRequest,
     tryGiveCigarette,
     closePool,
+    saveFaqDocument,
+    getFaqDocument,
 };
