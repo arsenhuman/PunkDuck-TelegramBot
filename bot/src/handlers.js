@@ -1,6 +1,7 @@
 const db = require('./core/db');
 const SETTINGS = require('../settings');
 
+const { handleSetFaq, handleFaqQuestion, mentionsBot } = require('./features/faq');
 const { shouldRandomBully, randomBully, handleReply } = require('./features/bully');
 const { generateSummary } = require('./features/summary');
 const { requestCigarette, registerCigaretteHandlers } = require('./features/cigarette');
