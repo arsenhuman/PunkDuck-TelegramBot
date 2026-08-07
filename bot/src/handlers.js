@@ -8,7 +8,7 @@ const { requestCigarette, registerCigaretteHandlers } = require('./features/ciga
 const { resolveTenant } = require('./core/resolveTenant');
 const { checkUsageLimit } = require('./core/featureGate');
 const { t } = require('./core/i18n');
-const { handleSettingsCommand, registerSettingsHandlers } = require('./features/settings');
+const { handleSettingsCommand, registerSettingsHandlers } = require('./features/menu');
 const { isChatAdmin } = require('./utils/adminCheck');
 const { COMMAND_FEATURES } = require('./commandFeatureRegistry');
 
