@@ -8,6 +8,8 @@ const { requestCigarette, registerCigaretteHandlers } = require('./features/ciga
 const { resolveTenant } = require('./core/resolveTenant');
 const { checkUsageLimit } = require('./core/featureGate');
 const { t } = require('./core/i18n');
+const { handleSettingsCommand, registerSettingsHandlers } = require('./features/settings');
+const { isChatAdmin } = require('./utils/adminCheck');
 const { COMMAND_FEATURES } = require('./commandFeatureRegistry');
 
 const DEFAULT_PERIOD_HOURS = 24;
@@ -66,6 +68,7 @@ function registerHandlers(bot) {
     });
 
     registerCigaretteHandlers(bot);
+    registerSettingsHandlers(bot);
 
     // Independent command features (joke / someshit / roast): registered
     // generically, gated by the resolved tenant. Add/remove one in
@@ -91,6 +94,20 @@ function registerHandlers(bot) {
             await handleSetFaq(ctx, tenant);
         } catch (err) {
             console.error('[handlers] ошибка /setfaq:', err);
+            await ctx.reply(t(tenant, 'genericError'));
+        }
+    });
+
+    bot.command('settings', async (ctx) => {
+        const tenant = await resolveTenant(ctx.chat.id);
+        if (!(await isChatAdmin(ctx))) {
+            await ctx.reply(t(tenant, 'settingsNotAdmin'));
+            return;
+        }
+        try {
+            await handleSettingsCommand(ctx, tenant);
+        } catch (err) {
+            console.error('[handlers] ошибка /settings:', err);
             await ctx.reply(t(tenant, 'genericError'));
         }
     });
