@@ -9,7 +9,7 @@
 const { t } = require('../core/i18n');
 const { resolveTenant, invalidateTenantCache } = require('../core/resolveTenant');
 const { updateTenantSettings } = require('../core/tenantSettings');
-const { isChatAdmin } = require('../core/adminCheck');
+const { isChatAdmin } = require('../utils/adminCheck');
 
 const TOGGLEABLE_FEATURES = ['cigarette', 'bully', 'jokes', 'memes', 'summary', 'faq'];
 
