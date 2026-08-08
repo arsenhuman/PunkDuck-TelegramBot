@@ -20,7 +20,7 @@ const { resolveTenant, invalidateTenantCache } = require('../core/resolveTenant'
 const { updateTenantSettings } = require('../core/tenantSettings');
 const { isChatAdmin } = require('../utils/adminCheck');
 
-const TOGGLEABLE_FEATURES = ['cigarette', 'bully', 'jokes', 'memes', 'summary', 'faq'];
+const TOGGLEABLE_FEATURES = ['cigarette', 'bully', 'jokes', 'memes', 'summary', 'faq', 'autoSummary'];
 
 const CIGARETTE_FREQUENCY_PRESETS = {
     rare: { chance: 1 / 100 },
@@ -32,6 +32,12 @@ const BULLY_FREQUENCY_PRESETS = {
     rare: { minInterval: 150, jitter: 30 },
     medium: { minInterval: 70, jitter: 15 },
     often: { minInterval: 30, jitter: 10 },
+};
+
+const AUTO_SUMMARY_FREQUENCY_PRESETS = {
+    rare:   { intervalMinutes: 10080 }, // once per week
+    medium: { intervalMinutes: 4320 }, 
+    often:  { intervalMinutes: 1440 }, 
 };
 
 // target -> { presets, presetKey, labelKey } — drives buildFrequencySection
@@ -93,6 +99,14 @@ function buildFeaturesMenu(tenant) {
         const mark = enabled ? '✅' : '❌';
         return [{ text: `${mark} ${t(tenant, `featureName_${feature}`)}`, callback_data: `st:toggle:${feature}` }];
     });
+    if (tenant.features.autoSummary?.enabled) {
+        rows.push([{
+            text: tenant.autoSummaryThreadId
+                ? t(tenant, 'autoSummaryThreadStatusSet')
+                : t(tenant, 'autoSummaryThreadStatusDefault'),
+            callback_data: 'noop',
+        }]);
+    }
     rows.push([{ text: t(tenant, 'settingsBackButton'), callback_data: 'st:menu:main' }]);
     return { text: t(tenant, 'settingsFeaturesTitle'), keyboard: rows };
 }
@@ -126,6 +140,8 @@ function buildFrequencyMenu(tenant) {
         keyboard: [
             ...buildFrequencySection(tenant, 'cigarette'),
             ...buildFrequencySection(tenant, 'bully'),
+            ...buildFrequencySection(tenant, 'autoSummary'),
+
             [{ text: t(tenant, 'settingsBackButton'), callback_data: 'st:menu:main' }],
         ],
     };
