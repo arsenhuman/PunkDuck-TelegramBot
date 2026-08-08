@@ -185,7 +185,7 @@ function registerHandlers(bot) {
 
     bot.command('start', async (ctx) => {
         const tenant = await resolveTenant(ctx.chat.id);
-        await ctx.reply(t(tenant, 'start', { botUsername: ctx.botInfo.username }));
+        await ctx.reply(`${t(tenant, 'start', { botUsername: ctx.botInfo.username })}\n\n${buildHelpText(tenant)}`);
     });
 }
 
