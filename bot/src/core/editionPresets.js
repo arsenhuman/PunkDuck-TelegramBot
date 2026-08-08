@@ -19,6 +19,7 @@ const EDITION_PRESETS = {
         language: 'ru',
         features: {
             cigarette: { enabled: true, chance: 1 / 100 },
+            beer: { enabled: true, chance: 1/150 },
             bully: { enabled: true, minInterval: 70, jitter: 15 },
             jokes: { enabled: true },
             memes: { enabled: true },
@@ -40,6 +41,7 @@ const EDITION_PRESETS = {
         language: 'ru',
         features: {
             cigarette: { enabled: true, chance: 1 / 100 },
+            beer: { enabled: true, chance: 1/150 },
             bully: { enabled: true, minInterval: 70, jitter: 15 },
             jokes: { enabled: true },
             memes: { enabled: true },
@@ -63,6 +65,7 @@ const EDITION_PRESETS = {
         language: 'ru',
         features: {
             cigarette: { enabled: false, chance: 1 / 100 },
+            beer: { enabled: false, chance: 1/150 },
             bully: { enabled: false },
             jokes: { enabled: true },
             memes: { enabled: false },

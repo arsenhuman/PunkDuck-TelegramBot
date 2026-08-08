@@ -16,6 +16,7 @@ const { handleSetFaq, handleFaqQuestion, mentionsBot } = require('./features/faq
 const { handleSettingsCommand, registerSettingsHandlers } = require('./features/menu');
 const { generateSummary } = require('./features/summary');
 const { buildHelpText } = require('./features/help');
+const { requestBeer, registerBeerHandlers } = require('./features/beer');
 
 // Shared helpers and command registry
 const { isChatAdmin } = require('./utils/adminCheck');
@@ -73,10 +74,20 @@ function registerHandlers(bot) {
             }
         }
 
+        const beerConfig = tenant.features.beer ?? { enabled: false };
+        if (beerConfig.enabled && Math.random() < (beerConfig.chance ?? 0)) {
+            try {
+                await requestBeer(ctx, tenant);
+            } catch (err) {
+                console.error('[handlers] Не удалось отправить запрос на пиво:', err);
+            }
+        }
+
         return next();
     });
 
     registerCigaretteHandlers(bot);
+    registerBeerHandlers(bot); 
     registerSettingsHandlers(bot);
 
     // Independent command features (joke / someshit / roast): registered

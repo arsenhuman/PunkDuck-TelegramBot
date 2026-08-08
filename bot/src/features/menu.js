@@ -25,7 +25,13 @@ const TOGGLEABLE_FEATURES = ['cigarette', 'bully', 'jokes', 'memes', 'summary', 
 const CIGARETTE_FREQUENCY_PRESETS = {
     rare: { chance: 1 / 250 },
     medium: { chance: 1 / 100 },
-    often: { chance: 1 / 20 },
+    often: { chance: 1 / 50 },
+};
+
+const BEER_FREQUENCY_PRESETS = {
+    rare: { chance: 1 / 220 },
+    medium: { chance: 1 / 150 },
+    often: { chance: 1 / 75 },
 };
 
 const BULLY_FREQUENCY_PRESETS = {
