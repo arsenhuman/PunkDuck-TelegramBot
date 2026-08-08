@@ -83,5 +83,14 @@
   "autoSummaryThreadSet": "готово, теперь авто-выжимка будет падать сюда.",
   "autoSummaryDisabled": "авто-выжимка выключена — включи её в /settings → Функции.",
   "autoSummaryThreadStatusSet": "куда скидывать авто-выжимку?",
-  "autoSummaryThreadStatusDefault": "🧵 топик авто-выжимки: не выбран (General)"
+  "autoSummaryThreadStatusDefault": "🧵 топик авто-выжимки: не выбран (General)",
+  "helpIntro": "🤖 вот что я умею тут:",
+  "helpSummaryDefault": "/summary — выжимка с последнего раза\n/summary 6h — за последние 6 часов",
+  "helpJoke": "/joke — анекдот, часто плохой",
+  "helpMemes": "/someshit — рандомная картинка",
+  "helpRoast": "/roast <текст или реплай> — прожарю",
+  "helpGpt": "/gpt <вопрос> — спроси меня о чём угодно",
+  "helpSetFaq": "/setfaq — обновить FAQ (только админы)",
+  "helpSetSummaryThread": "/setsummarythread — куда слать авто-выжимку (напиши в нужной теме, только админы)",
+  "helpSettings": "/settings — настройки бота (только админы)"
 }

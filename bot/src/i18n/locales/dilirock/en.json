@@ -83,5 +83,14 @@
   "autoSummaryThreadSet": "Done, auto-summaries will now be posted here.",
   "autoSummaryDisabled": "Auto-summary is disabled — enable it in /settings → Features.",
   "autoSummaryThreadStatusSet": "Where should auto-summaries be posted?",
-  "autoSummaryThreadStatusDefault": "🧵 Auto-summary topic: Not selected (General)"
+  "autoSummaryThreadStatusDefault": "🧵 Auto-summary topic: Not selected (General)",
+  "helpIntro": "🤖 here is what I can do:",
+  "helpSummaryDefault": "/summary — summary since the last one\n/summary 6h — the last 6 hours",
+  "helpJoke": "/joke — a joke, often a bad one",
+  "helpMemes": "/someshit — a random picture",
+  "helpRoast": "/roast <text or reply> — I will roast it",
+  "helpGpt": "/gpt <question> — ask me anything",
+  "helpSetFaq": "/setfaq — update the FAQ (admins only)",
+  "helpSetSummaryThread": "/setsummarythread — set where auto-summaries are sent (send it in the target topic, admins only)",
+  "helpSettings": "/settings — bot settings (admins only)"
 }

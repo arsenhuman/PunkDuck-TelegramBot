@@ -15,6 +15,7 @@ const { requestCigarette, registerCigaretteHandlers } = require('./features/ciga
 const { handleSetFaq, handleFaqQuestion, mentionsBot } = require('./features/faq');
 const { handleSettingsCommand, registerSettingsHandlers } = require('./features/menu');
 const { generateSummary } = require('./features/summary');
+const { buildHelpText } = require('./features/help');
 
 // Shared helpers and command registry
 const { isChatAdmin } = require('./utils/adminCheck');
@@ -175,6 +176,11 @@ function registerHandlers(bot) {
         invalidateTenantCache(ctx.chat.id);
 
         await ctx.reply(`edition чата: ${tenant.edition} → ${newEdition}`);
+    });
+
+    bot.command('help', async (ctx) => {
+        const tenant = await resolveTenant(ctx.chat.id);
+        await ctx.reply(buildHelpText(tenant));
     });
 
     bot.command('start', async (ctx) => {
