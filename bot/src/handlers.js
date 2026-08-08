@@ -98,6 +98,29 @@ function registerHandlers(bot) {
         }
     });
 
+    bot.command('setsummarythread', async (ctx) => {
+        const tenant = await resolveTenant(ctx.chat.id);
+        if (!(await isChatAdmin(ctx))) {
+            await ctx.reply(t(tenant, 'settingsNotAdmin'));
+            return;
+        }
+        if (!tenant.features.autoSummary?.enabled) {
+            await ctx.reply(t(tenant, 'autoSummaryDisabled'));
+            return;
+        }
+
+        // null = "General"/сам чат — админ явно сбрасывает тему, вызвав команду
+        // не в топике (или в General-топике форума, у которого thread_id тоже нет).
+        const threadId = ctx.message.message_thread_id ?? null;
+
+        await db.setAutoSummaryThread(ctx.chat.id, threadId);
+        invalidateTenantCache(ctx.chat.id);
+
+        await ctx.reply(t(tenant, 'autoSummaryThreadSet'), {
+            message_thread_id: threadId ?? undefined,
+        });
+    });
+
     bot.command('settings', async (ctx) => {
         const tenant = await resolveTenant(ctx.chat.id);
         if (!(await isChatAdmin(ctx))) {
