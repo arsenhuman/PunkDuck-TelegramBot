@@ -70,5 +70,12 @@
   "intensityModifiers": {
     "soft": "Go easier than usual: light teasing, no rudeness or profanity.",
     "hard": "Be maximally savage and toxic, don't hold back, profanity and dark humor are fine."
-  }
+  },
+  "featureName_autoSummary": "🔁 Auto-summary",
+  "settingsFrequencyAutoSummaryLabel": "🔁 Auto-summary:",
+  "autoSummaryResult": "🔁 Auto-summary ({messageCount} msgs):\n\n{summaryText}",
+  "autoSummaryThreadSet": "Done, auto-summaries will now be posted here.",
+  "autoSummaryDisabled": "Auto-summary is disabled — enable it in /settings → Features.",
+  "autoSummaryThreadStatusSet": "🧵 Auto-summary topic selected",
+  "autoSummaryThreadStatusDefault": "🧵 Auto-summary topic: Not selected (General)"
 }

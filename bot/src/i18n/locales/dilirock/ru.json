@@ -70,5 +70,12 @@
   "intensityModifiers": {
     "soft": "Будь мягче обычного: подкалывай по-доброму, без грубости и мата.",
     "hard": "Будь максимально дерзкой и токсичной, не сдерживайся, мат и чёрный юмор — это нормально."
-  }
+  },
+  "featureName_autoSummary": "🔁 Авто-выжимка",
+  "settingsFrequencyAutoSummaryLabel": "🔁 Авто-выжимка:",
+  "autoSummaryResult": "🔁 авто-выжимка ({messageCount} сообщ.):\n\n{summaryText}",
+  "autoSummaryThreadSet": "готово, теперь авто-выжимка будет падать сюда.",
+  "autoSummaryDisabled": "авто-выжимка выключена — включи её в /settings → Функции.",
+  "autoSummaryThreadStatusSet": "🧵 тема авто-выжимки выбрана",
+  "autoSummaryThreadStatusDefault": "🧵 тема авто-выжимки: не выбрана (General)"
 }
