@@ -60,13 +60,14 @@
   "freqRare": "редко",
   "freqMedium": "средне",
   "freqOften": "часто",
+  "freqOff": "выкл",
   "featureName_cigarette": "🚬 Сигарета",
   "featureName_bully": "😈 Буллинг",
   "featureName_jokes": "😂 Шутки",
   "featureName_memes": "🖼 Мемы",
   "featureName_summary": "📋 Выжимка",
   "featureName_faq": "❓ FAQ",
-  "bullyIntensityModifiers": {
+  "intensityModifiers": {
     "soft": "Будь мягче обычного: подкалывай по-доброму, без грубости и мата.",
     "hard": "Будь максимально дерзкой и токсичной, не сдерживайся, мат и чёрный юмор — это нормально."
   }

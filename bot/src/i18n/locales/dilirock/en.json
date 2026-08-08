@@ -60,13 +60,14 @@
   "freqRare": "rare",
   "freqMedium": "medium",
   "freqOften": "often",
+  "freqOff": "off",
   "featureName_cigarette": "🚬 Cigarette",
   "featureName_bully": "😈 Bullying",
   "featureName_jokes": "😂 Jokes",
   "featureName_memes": "🖼 Memes",
   "featureName_summary": "📋 Summary",
   "featureName_faq": "❓ FAQ",
-  "bullyIntensityModifiers": {
+  "intensityModifiers": {
     "soft": "Go easier than usual: light teasing, no rudeness or profanity.",
     "hard": "Be maximally savage and toxic, don't hold back, profanity and dark humor are fine."
   }
