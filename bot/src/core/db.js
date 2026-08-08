@@ -35,8 +35,7 @@ async function saveMessage({
     messageType,
     textContent,
     replyToMsgId,
-    sentAt,
-    messageThreadId
+    sentAt
 }) {
     await pool.query(
         `INSERT INTO messages (
