@@ -23,8 +23,8 @@ const { isChatAdmin } = require('../utils/adminCheck');
 const TOGGLEABLE_FEATURES = ['cigarette', 'bully', 'jokes', 'memes', 'summary', 'faq', 'autoSummary'];
 
 const CIGARETTE_FREQUENCY_PRESETS = {
-    rare: { chance: 1 / 100 },
-    medium: { chance: 1 / 50 },
+    rare: { chance: 1 / 250 },
+    medium: { chance: 1 / 100 },
     often: { chance: 1 / 20 },
 };
 
