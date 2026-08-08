@@ -6,12 +6,12 @@
 // generation for each chat. A 5-minute granularity is more than enough —
 // the minimum available interval in /settings ("frequent") is 2 hours.
 
-const db = require('./db');
+const db = require('../core/db');
 const { resolveTenant } = require('../core/resolveTenant');
 const { t } = require('../core/i18n');
 const { generateSummary } = require('./summary');
 
-const TICK_INTERVAL_MS = 5 * 60 * 1000;
+const TICK_INTERVAL_MS = 60 * 60 * 1000;
 const FALLBACK_PERIOD_MS = 24 * 60 * 60 * 1000; // if last_run_at is empty for some reason
 
 async function runAutoSummaryTick(bot) {
