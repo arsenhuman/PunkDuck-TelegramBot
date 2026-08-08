@@ -32,7 +32,7 @@ function formatMessage(row) {
     let line = `[${time}] ${author}: ${body}`;
     if (row.replied_to_text) {
         const replyAuthor = row.replied_to_author || '?';
-        line += ` (в ответ ${replyAuthor}: "${truncate(row.replied_to_text, 60)}")`;
+        line += ` (reply to ${replyAuthor}: "${truncate(row.replied_to_text, 60)}")`;
     }
     return line;
 }
@@ -59,7 +59,7 @@ async function generateSummary(messageRows, tenant) {
     const chatLog = trimmed.map(formatMessage).join('\n');
 
     const userPrompt = trimmed.length < messageRows.length
-        ? `(Показаны только последние ${MAX_MESSAGES} из ${messageRows.length} сообщений за период)\n\n${chatLog}`
+        ? `(Only the latest ${MAX_MESSAGES} of ${messageRows.length} messages from the period are shown)\n\n${chatLog}`
         : chatLog;
 
     const response = await client.chat.completions.create({

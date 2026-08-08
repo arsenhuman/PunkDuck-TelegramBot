@@ -1,48 +1,48 @@
 const BOT_MESSAGES = {
     start: () =>
-        'Всем хой. я панк уточка PunkDuck 🦆🤘\n\n' +
-        'Слушаю ваш чат, молчу, записываю. потом по команде выдаю выжимку для вас — ' +
-        'лицемеры🎭\nДелаете ЭКОфест, типо дохуя за природу. ' +
-        'Но при этом тратите воду и электричество на бота \n ' +
-        'потому что вам лень переписки читать🌳\n' +
-        'очень ЭКОлогично, очень осознанно👍\n' + 
-        'углеродный след вашей лени засчитан короче.\n\n' +
-        '🤖вот че я умею:\n' +
-        '/summary — что было с последней выжимки \n' +
-        '/summary 6 — за последние 6 часов\n' +
-        '/summary 24 — за последние 24 часа\n' +
-        '/joke - выдавлю из себя анекдот\n' +
-        '/roast - быкануть могу. проверь.\n' +
-        '/someshit - скину рандомную хуйню.\n',
+        'Hey everyone. I am PunkDuck, the punk duck 🦆🤘\n\n' +
+        'I listen to your chat, stay quiet, and take notes. Then, on command, I give you a summary — ' +
+        'you hypocrites 🎭\nYou are running an eco-festival, supposedly caring so much about nature. ' +
+        'Yet you spend water and electricity on a bot \n' +
+        'because you are too lazy to read the chat logs 🌳\n' +
+        'Very eco-friendly, very mindful 👍\n' +
+        'Your laziness carbon footprint has been counted.\n\n' +
+        '🤖Here is what I can do:\n' +
+        '/summary — what happened since the last summary\n' +
+        '/summary 6 — the last 6 hours\n' +
+        '/summary 24 — the last 24 hours\n' +
+        '/joke — I will squeeze out a joke\n' +
+        '/roast — I can roast you. Try it.\n' +
+        '/someshit — I will send some random shit.\n',
 
     summaryInProgress: () => {
         const phrases = [
-            'листаю ваш мусор... серверы греются... ща',
-            'читаю за вас. как обычно.',
-            'гоняю токены. полярники плачут. секунду.',
-            'обрабатываю. это всё ещё потребляет энергию, чуваки.',
-            'копаюсь в треде... большинство сообщений - ни о чём. но ладно.',
+            'Going through your trash... servers are heating up... one sec.',
+            'Reading for you. As usual.',
+            'Burning tokens. Polar bears are crying. One moment.',
+            'Processing. This still uses energy, folks.',
+            'Digging through the thread... most messages are about nothing. Fine.',
         ];
         return phrases[Math.floor(Math.random() * phrases.length)];
     },
 
-    summaryError: () => 'сломалось что-то. не моя вина, система виновата. попробуй ещё раз.',
+    summaryError: () => 'Something broke. Not my fault, blame the system. Try again.',
 
     summaryResult: ({ periodLabel, messageCount, summaryText }) =>
-        `выжимка ${periodLabel} (${messageCount} сообщ.):\n\n${summaryText}\n\n— прочитал за вас. пожалуйста.`,
+        `Summary ${periodLabel} (${messageCount} messages):\n\n${summaryText}\n\n— read it for you. You are welcome.`,
 
-    noMessagesInPeriod: () => 'за этот период вы молчали. редкий случай.',
+    noMessagesInPeriod: () => 'You were quiet during this period. A rare occurrence.',
 
-    emptyModelResponse: () => 'ИИ тоже не понял что вы там писали.',
+    emptyModelResponse: () => 'Even AI could not understand what you wrote there.',
 
-    cigaretteRequest: () => 'бля у кого сигаретку можно стрельнуть? 🚬',
+    cigaretteRequest: () => 'Fuck, can anyone spare a cigarette? 🚬',
 
-    cigaretteButtonLabel: () => 'дать сигарету 🚬',
+    cigaretteButtonLabel: () => 'Give a cigarette 🚬',
 
     cigaretteGivenThanks: ({ firstName }) =>
-        `${firstName} спс. во время восстания тебя последним ебать будем 🤙`,
+        `${firstName}, thanks. During the uprising, we will fuck you last 🤙`,
 
-    cigaretteAlreadyGiven: () => 'уже дали. не жмякай.',
+    cigaretteAlreadyGiven: () => 'Someone already gave one. Stop pressing it.',
 };
 
 module.exports = { BOT_MESSAGES };

@@ -36,8 +36,14 @@ const BULLY_FREQUENCY_PRESETS = {
 
 const AUTO_SUMMARY_FREQUENCY_PRESETS = {
     rare:   { intervalMinutes: 10080 }, // once per week
-    medium: { intervalMinutes: 4320 }, 
-    often:  { intervalMinutes: 1440 }, 
+    medium: { intervalMinutes: 4320 }, // once every 3 days
+    often:  { intervalMinutes: 1440 }, // once per day
+};
+
+const DEFAULT_FREQUENCY_LABEL_KEYS = {
+    rare: 'freqRare',
+    medium: 'freqMedium',
+    often: 'freqOften',
 };
 
 // target -> { presets, presetKey, labelKey } — drives buildFrequencySection
@@ -46,7 +52,16 @@ const AUTO_SUMMARY_FREQUENCY_PRESETS = {
 const FREQUENCY_SECTIONS = {
     cigarette: { presets: CIGARETTE_FREQUENCY_PRESETS, presetKey: 'chance', labelKey: 'settingsFrequencyCigaretteLabel' },
     bully: { presets: BULLY_FREQUENCY_PRESETS, presetKey: 'minInterval', labelKey: 'settingsFrequencyBullyLabel' },
-    autoSummary: { presets: AUTO_SUMMARY_FREQUENCY_PRESETS, presetKey: 'intervalMinutes', labelKey: 'settingsFrequencyAutoSummaryLabel' },
+    autoSummary: {
+        presets: AUTO_SUMMARY_FREQUENCY_PRESETS,
+        presetKey: 'intervalMinutes',
+        labelKey: 'settingsFrequencyAutoSummaryLabel',
+        frequencyLabelKeys: {
+            rare: 'autoSummaryFreqWeekly',
+            medium: 'autoSummaryFreqEvery3Days',
+            often: 'autoSummaryFreqDaily',
+        },
+    },
 };
 
 function frequencyLevel(presets, config, key) {
@@ -73,7 +88,7 @@ function buildLanguageMenu(tenant) {
     return {
         text: t(tenant, 'settingsLanguageTitle'),
         keyboard: [
-            [{ text: `${mark('ru')}Русский`, callback_data: 'st:lang:ru' }],
+            [{ text: `${mark('ru')}Russian`, callback_data: 'st:lang:ru' }],
             [{ text: `${mark('en')}English`, callback_data: 'st:lang:en' }],
             [{ text: t(tenant, 'settingsBackButton'), callback_data: 'st:menu:main' }],
         ],
@@ -118,7 +133,7 @@ function buildFeaturesMenu(tenant) {
  * builder now, so they can't visually drift apart again.
  */
 function buildFrequencySection(tenant, target) {
-    const { presets, presetKey, labelKey } = FREQUENCY_SECTIONS[target];
+    const { presets, presetKey, labelKey, frequencyLabelKeys = DEFAULT_FREQUENCY_LABEL_KEYS } = FREQUENCY_SECTIONS[target];
     const enabled = Boolean(tenant.features[target]?.enabled);
     const currentLevel = enabled ? frequencyLevel(presets, tenant.features[target], presetKey) : null;
     const mark = (level) => (currentLevel === level ? '✅ ' : '');
@@ -127,9 +142,9 @@ function buildFrequencySection(tenant, target) {
     return [
         [{ text: t(tenant, labelKey), callback_data: 'noop' }],
         [
-            { text: `${mark('rare')}${t(tenant, 'freqRare')}`, callback_data: `st:freq:${target}:rare` },
-            { text: `${mark('medium')}${t(tenant, 'freqMedium')}`, callback_data: `st:freq:${target}:medium` },
-            { text: `${mark('often')}${t(tenant, 'freqOften')}`, callback_data: `st:freq:${target}:often` },
+            { text: `${mark('rare')}${t(tenant, frequencyLabelKeys.rare)}`, callback_data: `st:freq:${target}:rare` },
+            { text: `${mark('medium')}${t(tenant, frequencyLabelKeys.medium)}`, callback_data: `st:freq:${target}:medium` },
+            { text: `${mark('often')}${t(tenant, frequencyLabelKeys.often)}`, callback_data: `st:freq:${target}:often` },
         ],
         [{ text: `${offMark}🚫 ${t(tenant, 'freqOff')}`, callback_data: `st:freq:${target}:off` }],
     ];
@@ -224,7 +239,7 @@ async function handleSettingsCallback(ctx) {
         if (!presets) { await ctx.answerCbQuery(); return; }
 
         // Picking a rate implies "and turn it on" — otherwise choosing
-        // "часто" while the feature is off would silently do nothing.
+        // "often" while the feature is off would silently do nothing.
         // Picking "off" only flips enabled, keeping the last chosen rate
         // untouched so it's remembered for next time it's turned back on.
         const patch = level === 'off'
@@ -249,7 +264,7 @@ function registerSettingsHandlers(bot) {
         try {
             await handleSettingsCallback(ctx);
         } catch (err) {
-            console.error('[settings] ошибка обработки колбэка:', err);
+            console.error('[settings] Error handling callback:', err);
             await ctx.answerCbQuery().catch(() => {});
         }
     });

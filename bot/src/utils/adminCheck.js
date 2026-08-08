@@ -11,7 +11,7 @@ async function isChatAdmin(ctx) {
         const member = await ctx.telegram.getChatMember(ctx.chat.id, ctx.from.id);
         return member.status === 'administrator' || member.status === 'creator';
     } catch (err) {
-        console.error('[adminCheck] Не удалось проверить права администратора:', err);
+        console.error('[adminCheck] Failed to check administrator permissions:', err);
         return false;
     }
 }
