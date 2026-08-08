@@ -15,6 +15,8 @@
 const { getRandomJoke } = require('./features/jokes');
 const { getRandomMeme } = require('./features/memes');
 const { handleRoast } = require('./features/bully');
+const { handleGpt } = require('./features/gpt');
+
 const { t } = require('./core/i18n');
 
 const COMMAND_FEATURES = [
@@ -39,6 +41,11 @@ const COMMAND_FEATURES = [
         command: 'roast',
         feature: 'bully',
         handler: (ctx, tenant) => handleRoast(ctx, tenant),
+    },
+    {
+        command: 'gpt',
+        feature: 'gpt',
+        handler: (ctx, tenant) => handleGpt(ctx, tenant),
     },
 ];
 
