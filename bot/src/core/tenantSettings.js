@@ -8,7 +8,9 @@ const { pool } = require('./db');
 
 async function getTenantRow(chatId) {
     const { rows } = await pool.query(
-        `SELECT chat_id, edition, plan, language, intensity, features, usage_limits, created_at, updated_at
+        `SELECT chat_id, edition, plan, language, intensity, features, usage_limits,
+                auto_summary_thread_id, auto_summary_last_run_at,
+                created_at, updated_at
          FROM chat_settings WHERE chat_id = $1`,
         [chatId]
     );
