@@ -109,8 +109,6 @@ function registerHandlers(bot) {
             return;
         }
 
-        // null = "General"/сам чат — админ явно сбрасывает тему, вызвав команду
-        // не в топике (или в General-топике форума, у которого thread_id тоже нет).
         const threadId = ctx.message.message_thread_id ?? null;
 
         await db.setAutoSummaryThread(ctx.chat.id, threadId);
