@@ -25,6 +25,7 @@ const EDITION_PRESETS = {
             summary: { enabled: true },
             autoSummary: { enabled: true, intervalMinutes: 1440 }, // once per day
             faq: { enabled: false },
+            gpt: { enabled: true },
         },
         usageLimits: {
             summaryCallsPerDay: null, // null = unlimited
@@ -45,6 +46,7 @@ const EDITION_PRESETS = {
             summary: { enabled: false },
             autoSummary: { enabled: false, intervalMinutes: 1440 }, // once per day
             faq: { enabled: true },
+            gpt: { enabled: true },
         },
         usageLimits: {
             summaryCallsPerDay: null,
@@ -67,6 +69,7 @@ const EDITION_PRESETS = {
             summary: { enabled: true },
             autoSummary: { enabled: false, intervalMinutes: 1440 }, // once per day
             faq: { enabled: false },
+            gpt: { enabled: true },
         },
         usageLimits: {
             summaryCallsPerDay: 5,

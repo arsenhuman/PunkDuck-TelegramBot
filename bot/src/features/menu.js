@@ -20,7 +20,7 @@ const { resolveTenant, invalidateTenantCache } = require('../core/resolveTenant'
 const { updateTenantSettings } = require('../core/tenantSettings');
 const { isChatAdmin } = require('../utils/adminCheck');
 
-const TOGGLEABLE_FEATURES = ['cigarette', 'bully', 'jokes', 'memes', 'summary', 'faq', 'autoSummary'];
+const TOGGLEABLE_FEATURES = ['cigarette', 'bully', 'jokes', 'memes', 'summary', 'faq', 'autoSummary', 'gpt'];
 
 const CIGARETTE_FREQUENCY_PRESETS = {
     rare: { chance: 1 / 250 },

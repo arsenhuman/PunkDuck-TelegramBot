@@ -6,6 +6,8 @@ const { checkUsageLimit } = require('./core/featureGate');
 const { t } = require('./core/i18n');
 const { resolveTenant, invalidateTenantCache } = require('./core/resolveTenant');
 const { setAutoSummaryThread } = require('./core/tenantSettings');
+const { EDITION_PRESETS } = require('./core/editionPresets');
+const { updateTenantSettings } = require('./core/tenantSettings'); 
 
 // Feature handlers
 const { shouldRandomBully, randomBully, handleReply } = require('./features/bully');
@@ -13,6 +15,7 @@ const { requestCigarette, registerCigaretteHandlers } = require('./features/ciga
 const { handleSetFaq, handleFaqQuestion, mentionsBot } = require('./features/faq');
 const { handleSettingsCommand, registerSettingsHandlers } = require('./features/menu');
 const { generateSummary } = require('./features/summary');
+const { buildHelpText } = require('./features/help');
 
 // Shared helpers and command registry
 const { isChatAdmin } = require('./utils/adminCheck');
@@ -157,9 +160,32 @@ function registerHandlers(bot) {
         }
     });
 
+    bot.command('edition', async (ctx) => {
+        if (ctx.from?.id !== SETTINGS.BOT_OWNER_ID) return;
+
+        const tenant = await resolveTenant(ctx.chat.id);
+        const validEditions = Object.keys(EDITION_PRESETS); // берём прямо из editionPresets.js — не дублируем список руками
+        const newEdition = ctx.message.text.split(' ')[1]?.trim();
+
+        if (!newEdition || !validEditions.includes(newEdition)) {
+            await ctx.reply(`/edition <${validEditions.join(' | ')}>\nсейчас: ${tenant.edition}`);
+            return;
+        }
+
+        await updateTenantSettings(ctx.chat.id, { edition: newEdition });
+        invalidateTenantCache(ctx.chat.id);
+
+        await ctx.reply(`edition чата: ${tenant.edition} → ${newEdition}`);
+    });
+
+    bot.command('help', async (ctx) => {
+        const tenant = await resolveTenant(ctx.chat.id);
+        await ctx.reply(buildHelpText(tenant));
+    });
+
     bot.command('start', async (ctx) => {
         const tenant = await resolveTenant(ctx.chat.id);
-        await ctx.reply(t(tenant, 'start', { botUsername: ctx.botInfo.username }));
+        await ctx.reply(`${t(tenant, 'start', { botUsername: ctx.botInfo.username })}\n\n${buildHelpText(tenant)}`);
     });
 }
 
