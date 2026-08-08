@@ -7,13 +7,6 @@ const MODEL = SETTINGS.OPENAI_MODEL || 'gpt-4o-mini';
 
 const messageCounters = new Map();
 
-function buildBullyPrompt(tenant) {
-    const base = getPrompt(tenant, 'bully');
-    const intensity = tenant.features.bully?.intensity ?? 'medium';
-    const modifier = t(tenant, 'bullyIntensityModifiers')?.[intensity];
-    return modifier ? `${base}\n${modifier}` : base;
-}
-
 function shouldRandomBully(chatId, config) {
     const { minInterval, jitter } = config;
     const messageCounter = (messageCounters.get(chatId) ?? 0) + 1;
@@ -50,7 +43,7 @@ async function handleRoast(ctx, tenant) {
         max_tokens: 100,
         temperature: 0.9,
         messages: [
-            { role: 'system', content: buildBullyPrompt(tenant) },
+            { role: 'system', content: getPrompt(tenant, 'bully') },
             { role: 'user', content: `пройдись по этому сообщению: "${target}"` },
         ],
     });
@@ -70,7 +63,7 @@ async function handleReply(ctx, tenant) {
         max_tokens: 80,
         temperature: 0.9,
         messages: [
-            { role: 'system', content: buildBullyPrompt(tenant) },
+            { role: 'system', content: getPrompt(tenant, 'bully') },
             { role: 'user', content: `${firstName} пишет тебе: "${userText}"` },
         ],
     });

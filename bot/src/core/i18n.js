@@ -69,11 +69,24 @@ function t(tenant, key, params) {
     return interpolate(pickIfArray(value), params);
 }
 
-/** getPrompt(tenant, name) — an AI system prompt (bully / summary / faq / ...). */
+/**
+ * getPrompt(tenant, name) — an AI system prompt (bully / summary / faq / ...
+ * or any future one). Automatically appends the chat's intensity modifier
+ * (soft/medium/hard) on top of the base persona prompt, so EVERY feature
+ * that goes through getPrompt() picks up the /settings intensity dial for
+ * free — no per-feature wiring needed, including features that don't exist
+ * yet. 'medium' has no modifier by design: the base prompts are already
+ * calibrated for it, so only the soft/hard edges need an added instruction.
+ */
 function getPrompt(tenant, name) {
     const locale = resolveLocale(tenant.edition, tenant.language) || {};
     const fallback = resolveLocale(FALLBACK_EDITION, DEFAULT_LANGUAGE) || {};
-    return locale.prompts?.[name] ?? fallback.prompts?.[name] ?? '';
+    const base = locale.prompts?.[name] ?? fallback.prompts?.[name] ?? '';
+
+    const modifiers = locale.intensityModifiers ?? fallback.intensityModifiers ?? {};
+    const modifier = modifiers[tenant.intensity];
+
+    return modifier ? `${base}\n\n${modifier}` : base;
 }
 
 module.exports = { t, getPrompt };

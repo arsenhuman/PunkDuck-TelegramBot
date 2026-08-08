@@ -14,6 +14,10 @@
 // stored snapshot would out-rank the new preset default in the merge below.
 // Keeping overrides empty by default means editionPresets.js changes apply
 // live to every chat that hasn't been explicitly customized.
+//
+// `intensity` (soft/medium/hard) is a chat-level trait, not tied to any
+// edition preset, so it's read straight off the row rather than merged
+// against anything — see core/i18n.js getPrompt() for how it's applied.
 
 const { EDITION_PRESETS, DEFAULT_EDITION } = require('./editionPresets');
 const { getTenantRow, insertTenantDefaults } = require('./tenantSettings');
@@ -39,7 +43,7 @@ function mergeFeatures(presetFeatures, overrideFeatures) {
 
 /**
  * Returns the resolved config for a chat:
- *   { chatId, edition, plan, language, features, usageLimits }
+ *   { chatId, edition, plan, language, intensity, features, usageLimits }
  *
  * `features` and `usageLimits` are always fully populated (preset + overrides
  * merged), so callers never need to know about presets themselves.
@@ -70,6 +74,7 @@ async function resolveTenant(chatId) {
         edition: row.edition,
         plan: row.plan,
         language: row.language,
+        intensity: row.intensity,
         features: mergeFeatures(preset.features, row.features),
         usageLimits: { ...preset.usageLimits, ...row.usage_limits },
     };

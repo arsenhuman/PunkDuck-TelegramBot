@@ -1,10 +1,14 @@
-// settings.js — in-chat /settings menu (inline keyboard).
+// menu.js — in-chat /settings menu (inline keyboard).
 //
 // Everything here is a thin UI layer over tenantSettings.updateTenantSettings:
 // each action reads the current resolved tenant, patches ONE feature's
 // object (spreading its current value first — chat_settings.features does a
 // shallow JSONB merge at the top level, so omitting existing keys would
 // silently drop them), invalidates the cache, re-resolves, and re-renders.
+//
+// intensity is the one exception — it's a plain column on chat_settings
+// (chat-level trait, not tied to any one feature), so it's set directly via
+// { intensity: level } rather than nested inside a features.* patch.
 
 const { t } = require('../core/i18n');
 const { resolveTenant, invalidateTenantCache } = require('../core/resolveTenant');
@@ -57,7 +61,7 @@ function buildLanguageMenu(tenant) {
 }
 
 function buildIntensityMenu(tenant) {
-    const current = tenant.features.bully?.intensity ?? 'medium';
+    const current = tenant.intensity;
     const mark = (level) => (current === level ? '✅ ' : '');
     return {
         text: t(tenant, 'settingsIntensityTitle'),
@@ -158,7 +162,7 @@ async function handleSettingsCallback(ctx) {
 
     if (action === 'intensity') {
         const [level] = rest;
-        await updateTenantSettings(chatId, { features: { bully: { ...tenant.features.bully, intensity: level } } });
+        await updateTenantSettings(chatId, { intensity: level });
         invalidateTenantCache(chatId);
         const updated = await resolveTenant(chatId);
         await ctx.answerCbQuery(t(updated, 'settingsSaved'));
