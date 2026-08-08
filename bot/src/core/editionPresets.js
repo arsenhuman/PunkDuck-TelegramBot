@@ -23,6 +23,7 @@ const EDITION_PRESETS = {
             jokes: { enabled: true },
             memes: { enabled: true },
             summary: { enabled: true },
+            autoSummary: { enabled: true, intervalMinutes: 1440 }, // once per day
             faq: { enabled: false },
         },
         usageLimits: {
@@ -42,6 +43,7 @@ const EDITION_PRESETS = {
             jokes: { enabled: true },
             memes: { enabled: true },
             summary: { enabled: false },
+            autoSummary: { enabled: false, intervalMinutes: 1440 }, // once per day
             faq: { enabled: true },
         },
         usageLimits: {
@@ -63,6 +65,7 @@ const EDITION_PRESETS = {
             jokes: { enabled: true },
             memes: { enabled: false },
             summary: { enabled: true },
+            autoSummary: { enabled: false, intervalMinutes: 1440 }, // once per day
             faq: { enabled: false },
         },
         usageLimits: {
