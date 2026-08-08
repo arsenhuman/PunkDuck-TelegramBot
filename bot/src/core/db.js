@@ -71,6 +71,27 @@ async function getMessagesSince(chatId, sinceDate) {
     return rows;
 }
 
+async function getChatsDueForAutoSummary() {
+    const { rows } = await pool.query(
+        `SELECT chat_id, auto_summary_thread_id, auto_summary_last_run_at
+         FROM chat_settings
+         WHERE (features->'autoSummary'->>'enabled')::boolean IS TRUE
+           AND (
+             auto_summary_last_run_at IS NULL
+             OR auto_summary_last_run_at <
+                now() - ((features->'autoSummary'->>'intervalMinutes')::int || ' minutes')::interval
+           )`
+    );
+    return rows;
+}
+
+async function markAutoSummaryRun(chatId, at) {
+    await pool.query(
+        `UPDATE chat_settings SET auto_summary_last_run_at = $2 WHERE chat_id = $1`,
+        [chatId, at]
+    );
+}
+
 
 async function saveSummary({ chatId, requestedBy, periodStart, periodEnd, messageCount, summaryText, modelUsed, isCheckpoint }) {
     await pool.query(
@@ -143,4 +164,6 @@ module.exports = {
     closePool,
     saveFaqDocument,
     getFaqDocument,
+    getChatsDueForAutoSummary,
+    markAutoSummaryRun,
 };

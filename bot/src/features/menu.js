@@ -46,6 +46,7 @@ const AUTO_SUMMARY_FREQUENCY_PRESETS = {
 const FREQUENCY_SECTIONS = {
     cigarette: { presets: CIGARETTE_FREQUENCY_PRESETS, presetKey: 'chance', labelKey: 'settingsFrequencyCigaretteLabel' },
     bully: { presets: BULLY_FREQUENCY_PRESETS, presetKey: 'minInterval', labelKey: 'settingsFrequencyBullyLabel' },
+    autoSummary: { presets: AUTO_SUMMARY_FREQUENCY_PRESETS, presetKey: 'intervalMinutes', labelKey: 'settingsFrequencyAutoSummaryLabel' },
 };
 
 function frequencyLevel(presets, config, key) {
