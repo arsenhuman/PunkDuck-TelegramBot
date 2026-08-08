@@ -1,15 +1,20 @@
-const db = require('./core/db');
 const SETTINGS = require('../settings');
 
-const { handleSetFaq, handleFaqQuestion, mentionsBot } = require('./features/faq');
-const { shouldRandomBully, randomBully, handleReply } = require('./features/bully');
-const { generateSummary } = require('./features/summary');
-const { requestCigarette, registerCigaretteHandlers } = require('./features/cigarette');
-const { resolveTenant, invalidateTenantCache } = require('./core/resolveTenant');
+// Core services and configuration
+const db = require('./core/db');
 const { checkUsageLimit } = require('./core/featureGate');
 const { t } = require('./core/i18n');
+const { resolveTenant, invalidateTenantCache } = require('./core/resolveTenant');
 const { setAutoSummaryThread } = require('./core/tenantSettings');
+
+// Feature handlers
+const { shouldRandomBully, randomBully, handleReply } = require('./features/bully');
+const { requestCigarette, registerCigaretteHandlers } = require('./features/cigarette');
+const { handleSetFaq, handleFaqQuestion, mentionsBot } = require('./features/faq');
 const { handleSettingsCommand, registerSettingsHandlers } = require('./features/menu');
+const { generateSummary } = require('./features/summary');
+
+// Shared helpers and command registry
 const { isChatAdmin } = require('./utils/adminCheck');
 const { COMMAND_FEATURES } = require('./commandFeatureRegistry');
 
@@ -112,7 +117,7 @@ function registerHandlers(bot) {
 
         const threadId = ctx.message.message_thread_id ?? null;
 
-        await db.setAutoSummaryThread(ctx.chat.id, threadId);
+        await setAutoSummaryThread(ctx.chat.id, threadId);
         invalidateTenantCache(ctx.chat.id);
 
         await ctx.reply(t(tenant, 'autoSummaryThreadSet'), {

@@ -13,6 +13,7 @@
 const OpenAI = require('openai');
 const SETTINGS = require('../../settings');
 const { t, getPrompt } = require('../core/i18n');
+const { isChatAdmin } = require('../utils/adminCheck');
 const db = require('../core/db');
 
 const client = new OpenAI({ apiKey: SETTINGS.OPENAI_API_KEY });
@@ -34,17 +35,6 @@ function extractQuestion(ctx) {
     if (!username) return text.trim();
     const mentionRe = new RegExp(`@${username}`, 'gi');
     return text.replace(mentionRe, '').trim();
-}
-
-async function isChatAdmin(ctx) {
-    if (ctx.chat.type === 'private') return true;
-    try {
-        const member = await ctx.telegram.getChatMember(ctx.chat.id, ctx.from.id);
-        return member.status === 'administrator' || member.status === 'creator';
-    } catch (err) {
-        console.error('[faq] Не удалось проверить права администратора:', err);
-        return false;
-    }
 }
 
 async function handleSetFaq(ctx, tenant) {
