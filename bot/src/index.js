@@ -6,6 +6,7 @@ const SETTINGS = require('../settings');
 const { Telegraf } = require('telegraf');
 const { registerHandlers } = require('./handlers');
 const { closePool } = require('./core/db');
+const { startAutoSummaryScheduler } = require('./features/autoSummaryScheduler');
  
 const BOT_TOKEN = SETTINGS.BOT_TOKEN;
 if (!BOT_TOKEN) {
@@ -23,6 +24,7 @@ bot.catch((err, ctx) => {
  
 async function start() {
     await bot.launch();
+    startAutoSummaryScheduler(bot);
     console.log('[index] Bot started (long polling).');
 }
  
