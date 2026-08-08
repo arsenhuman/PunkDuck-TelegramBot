@@ -28,7 +28,7 @@ function registerHandlers(bot) {
         try {
             await logIncomingMessage(ctx);
         } catch (err) {
-            console.error('[handlers] Не удалось сохранить сообщение:', err);
+            console.error('[handlers] Failed to save message:', err);
         }
 
         const tenant = await resolveTenant(ctx.chat.id);
@@ -37,7 +37,7 @@ function registerHandlers(bot) {
             try {
                 await handleFaqQuestion(ctx, tenant);
             } catch (err) {
-                console.error('[handlers] ошибка FAQ:', err);
+                console.error('[handlers] FAQ error:', err);
                 await ctx.reply(t(tenant, 'faqAnswerError'));
             }
             return next();
@@ -48,7 +48,7 @@ function registerHandlers(bot) {
         if (isReplyToBot) {
             if (tenant.features.bully?.enabled) {
                 try { await handleReply(ctx, tenant); } catch (err) {
-                    console.error('[handlers] ошибка reply:', err);
+                    console.error('[handlers] Reply error:', err);
                 }
             }
             return next();
@@ -56,7 +56,7 @@ function registerHandlers(bot) {
 
         if (tenant.features.bully?.enabled && shouldRandomBully(ctx.chat.id, tenant.features.bully)) {
             try { await randomBully(ctx, tenant); } catch (err) {
-                console.error('[handlers] ошибка random bully:', err);
+                console.error('[handlers] Random bully error:', err);
             }
             return next();
         }
@@ -66,7 +66,7 @@ function registerHandlers(bot) {
             try {
                 await requestCigarette(ctx, tenant);
             } catch (err) {
-                console.error('[handlers] Не удалось отправить запрос на сигарету:', err);
+                console.error('[handlers] Failed to send cigarette request:', err);
             }
         }
 
@@ -86,7 +86,7 @@ function registerHandlers(bot) {
             try {
                 await handler(ctx, tenant);
             } catch (err) {
-                console.error(`[handlers] ошибка в команде /${command}:`, err);
+                console.error(`[handlers] Error in /${command} command:`, err);
                 await ctx.reply(t(tenant, 'genericError'));
             }
         });
@@ -99,7 +99,7 @@ function registerHandlers(bot) {
         try {
             await handleSetFaq(ctx, tenant);
         } catch (err) {
-            console.error('[handlers] ошибка /setfaq:', err);
+            console.error('[handlers] /setfaq error:', err);
             await ctx.reply(t(tenant, 'genericError'));
         }
     });
@@ -134,7 +134,7 @@ function registerHandlers(bot) {
         try {
             await handleSettingsCommand(ctx, tenant);
         } catch (err) {
-            console.error('[handlers] ошибка /settings:', err);
+            console.error('[handlers] /settings error:', err);
             await ctx.reply(t(tenant, 'genericError'));
         }
     });
@@ -152,7 +152,7 @@ function registerHandlers(bot) {
         try {
             await handleSummaryCommand(ctx, tenant);
         } catch (err) {
-            console.error('[handlers] Ошибка при генерации выжимки:', err);
+            console.error('[handlers] Error generating summary:', err);
             await ctx.reply(t(tenant, 'summaryError'));
         }
     });
@@ -209,7 +209,7 @@ function extractContent(msg) {
 
 async function handleSummaryCommand(ctx, tenant) {
     const chatId = ctx.chat.id;
-    const periodArg = ctx.message.text.split(' ')[1]; // например "/summary 6h" -> "6h"
+    const periodArg = ctx.message.text.split(' ')[1]; // e.g. "/summary 6h" -> "6h"
 
     const { periodStart, isCheckpoint } = await resolvePeriodStart(chatId, periodArg);
     const periodEnd = new Date();
@@ -241,9 +241,9 @@ async function handleSummaryCommand(ctx, tenant) {
 }
 
 /**
- * Определяет начало периода для выжимки:
- * - "/summary 6h" / "/summary 3d" — явный период
- * - "/summary" без аргумента — с момента последней выжимки, либо DEFAULT_PERIOD_HOURS, если выжимок ещё не было
+ * Determines the start of the summary period:
+ * - "/summary 6h" / "/summary 3d" — explicit period
+ * - "/summary" without an argument — since the last summary, or DEFAULT_PERIOD_HOURS if no summary exists yet
  */
 async function resolvePeriodStart(chatId, periodArg) {
     if (periodArg) {
@@ -258,7 +258,7 @@ async function resolvePeriodStart(chatId, periodArg) {
 }
 
 /**
- * Парсит строки вида "6h", "3d", "30m" в миллисекунды. Возвращает null, если формат не распознан.
+ * Parses strings such as "6h", "3d", and "30m" into milliseconds. Returns null when the format is not recognized.
  */
 function parsePeriodArg(arg) {
     const match = /^(\d+)([hdm])?$/.exec(arg.trim().toLowerCase());
@@ -272,7 +272,7 @@ function parsePeriodArg(arg) {
 
 function formatPeriodLabel(start, end) {
     const fmt = (d) => d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-    return `с ${fmt(start)} по ${fmt(end)}`;
+    return `from ${fmt(start)} to ${fmt(end)}`;
 }
 
 module.exports = { registerHandlers };

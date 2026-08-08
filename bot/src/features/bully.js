@@ -20,7 +20,7 @@ function shouldRandomBully(chatId, config) {
 }
 
 async function randomBully(ctx, tenant) {
-    const firstName = ctx.message?.from?.first_name || 'чувак';
+    const firstName = ctx.message?.from?.first_name || 'dude';
     const phrase = t(tenant, 'bullyRandomPhrases');
     await ctx.reply(`${firstName}, ${phrase}`, {
         reply_to_message_id: ctx.message.message_id,
@@ -43,11 +43,11 @@ async function handleRoast(ctx, tenant) {
         temperature: 0.9,
         messages: [
             { role: 'system', content: getPrompt(tenant, 'bully') },
-            { role: 'user', content: `пройдись по этому сообщению: "${target}"` },
+            { role: 'user', content: `Roast this message: "${target}"` },
         ],
     });
 
-    const text = response.choices[0]?.message?.content?.trim() || 'ну такое.';
+    const text = response.choices[0]?.message?.content?.trim() || 'meh.';
     await ctx.reply(text, { reply_to_message_id: ctx.message.message_id });
 }
 
@@ -63,11 +63,11 @@ async function handleReply(ctx, tenant) {
         temperature: 0.9,
         messages: [
             { role: 'system', content: getPrompt(tenant, 'bully') },
-            { role: 'user', content: `${firstName} пишет тебе: "${userText}"` },
+            { role: 'user', content: `${firstName} writes to you: "${userText}"` },
         ],
     });
 
-    const text = response.choices[0]?.message?.content?.trim() || 'угу.';
+    const text = response.choices[0]?.message?.content?.trim() || 'yeah.';
     await ctx.reply(text, { reply_to_message_id: ctx.message.message_id });
 }
 

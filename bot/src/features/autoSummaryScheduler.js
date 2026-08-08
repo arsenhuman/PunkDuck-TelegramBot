@@ -19,7 +19,7 @@ async function runAutoSummaryTick(bot) {
     try {
         dueChats = await db.getChatsDueForAutoSummary();
     } catch (err) {
-        console.error('[autoSummary] не смог получить список чатов:', err);
+        console.error('[autoSummary] Failed to get the list of chats:', err);
         return;
     }
 
@@ -27,7 +27,7 @@ async function runAutoSummaryTick(bot) {
         try {
             await runOneAutoSummary(bot, row);
         } catch (err) {
-            console.error(`[autoSummary] ошибка для чата ${row.chat_id}:`, err);
+            console.error(`[autoSummary] Error for chat ${row.chat_id}:`, err);
         }
     }
 }

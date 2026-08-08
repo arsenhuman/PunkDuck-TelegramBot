@@ -73,7 +73,7 @@ function buildLanguageMenu(tenant) {
     return {
         text: t(tenant, 'settingsLanguageTitle'),
         keyboard: [
-            [{ text: `${mark('ru')}Русский`, callback_data: 'st:lang:ru' }],
+            [{ text: `${mark('ru')}Russian`, callback_data: 'st:lang:ru' }],
             [{ text: `${mark('en')}English`, callback_data: 'st:lang:en' }],
             [{ text: t(tenant, 'settingsBackButton'), callback_data: 'st:menu:main' }],
         ],
@@ -224,7 +224,7 @@ async function handleSettingsCallback(ctx) {
         if (!presets) { await ctx.answerCbQuery(); return; }
 
         // Picking a rate implies "and turn it on" — otherwise choosing
-        // "часто" while the feature is off would silently do nothing.
+        // "often" while the feature is off would silently do nothing.
         // Picking "off" only flips enabled, keeping the last chosen rate
         // untouched so it's remembered for next time it's turned back on.
         const patch = level === 'off'
@@ -249,7 +249,7 @@ function registerSettingsHandlers(bot) {
         try {
             await handleSettingsCallback(ctx);
         } catch (err) {
-            console.error('[settings] ошибка обработки колбэка:', err);
+            console.error('[settings] Error handling callback:', err);
             await ctx.answerCbQuery().catch(() => {});
         }
     });
