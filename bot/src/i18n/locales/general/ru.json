@@ -76,6 +76,6 @@
   "autoSummaryResult": "🔁 авто-выжимка ({messageCount} сообщ.):\n\n{summaryText}",
   "autoSummaryThreadSet": "готово, теперь авто-выжимка будет падать сюда.",
   "autoSummaryDisabled": "авто-выжимка выключена — включи её в /settings → Функции.",
-  "autoSummaryThreadStatusSet": "🧵 тема авто-выжимки выбрана",
-  "autoSummaryThreadStatusDefault": "🧵 тема авто-выжимки: не выбрана (General)"
+  "autoSummaryThreadStatusSet": "куда скидывать авто-выжимку?",
+  "autoSummaryThreadStatusDefault": "🧵 топик авто-выжимки: не выбран (General)"
 }

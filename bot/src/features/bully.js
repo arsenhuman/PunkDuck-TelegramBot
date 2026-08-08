@@ -3,7 +3,7 @@ const SETTINGS = require('../../settings');
 const { t, getPrompt } = require('../core/i18n');
 
 const client = new OpenAI({ apiKey: SETTINGS.OPENAI_API_KEY });
-const MODEL = SETTINGS.OPENAI_MODEL || 'gpt-4o-mini';
+const MODEL = SETTINGS.OPENAI_MODEL_BULLY || 'gpt-4o';
 
 const messageCounters = new Map();
 
@@ -28,7 +28,6 @@ async function randomBully(ctx, tenant) {
 }
 
 async function handleRoast(ctx, tenant) {
-    // берём текст реплая или аргумент команды
     const replyText = ctx.message?.reply_to_message?.text;
     const argText = ctx.message.text.split(' ').slice(1).join(' ');
     const target = replyText || argText;
