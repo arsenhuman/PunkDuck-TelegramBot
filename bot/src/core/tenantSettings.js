@@ -70,4 +70,11 @@ async function updateTenantSettings(chatId, patch) {
     return rows[0] ?? null;
 }
 
-module.exports = { getTenantRow, insertTenantDefaults, updateTenantSettings };
+async function setAutoSummaryThread(chatId, threadId) {
+    await pool.query(
+        `UPDATE chat_settings SET auto_summary_thread_id = $2, updated_at = now() WHERE chat_id = $1`,
+        [chatId, threadId]
+    );
+}
+
+module.exports = { getTenantRow, insertTenantDefaults, updateTenantSettings, setAutoSummaryThread };
