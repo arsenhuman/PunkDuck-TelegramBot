@@ -98,6 +98,27 @@ function registerHandlers(bot) {
         }
     });
 
+    bot.command('setsummarythread', async (ctx) => {
+        const tenant = await resolveTenant(ctx.chat.id);
+        if (!(await isChatAdmin(ctx))) {
+            await ctx.reply(t(tenant, 'settingsNotAdmin'));
+            return;
+        }
+        if (!tenant.features.autoSummary?.enabled) {
+            await ctx.reply(t(tenant, 'autoSummaryDisabled'));
+            return;
+        }
+
+        const threadId = ctx.message.message_thread_id ?? null;
+
+        await db.setAutoSummaryThread(ctx.chat.id, threadId);
+        invalidateTenantCache(ctx.chat.id);
+
+        await ctx.reply(t(tenant, 'autoSummaryThreadSet'), {
+            message_thread_id: threadId ?? undefined,
+        });
+    });
+
     bot.command('settings', async (ctx) => {
         const tenant = await resolveTenant(ctx.chat.id);
         if (!(await isChatAdmin(ctx))) {

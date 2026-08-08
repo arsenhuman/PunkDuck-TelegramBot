@@ -77,6 +77,8 @@ async function resolveTenant(chatId) {
         intensity: row.intensity,
         features: mergeFeatures(preset.features, row.features),
         usageLimits: { ...preset.usageLimits, ...row.usage_limits },
+        autoSummaryThreadId: row.auto_summary_thread_id ?? null,
+        autoSummaryLastRunAt: row.auto_summary_last_run_at ?? null,
     };
 
     cache.set(chatId, { value: resolved, expiresAt: Date.now() + CACHE_TTL_MS });

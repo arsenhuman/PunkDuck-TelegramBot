@@ -8,7 +8,9 @@ const { pool } = require('./db');
 
 async function getTenantRow(chatId) {
     const { rows } = await pool.query(
-        `SELECT chat_id, edition, plan, language, intensity, features, usage_limits, created_at, updated_at
+        `SELECT chat_id, edition, plan, language, intensity, features, usage_limits,
+                auto_summary_thread_id, auto_summary_last_run_at,
+                created_at, updated_at
          FROM chat_settings WHERE chat_id = $1`,
         [chatId]
     );
@@ -68,4 +70,11 @@ async function updateTenantSettings(chatId, patch) {
     return rows[0] ?? null;
 }
 
-module.exports = { getTenantRow, insertTenantDefaults, updateTenantSettings };
+async function setAutoSummaryThread(chatId, threadId) {
+    await pool.query(
+        `UPDATE chat_settings SET auto_summary_thread_id = $2, updated_at = now() WHERE chat_id = $1`,
+        [chatId, threadId]
+    );
+}
+
+module.exports = { getTenantRow, insertTenantDefaults, updateTenantSettings, setAutoSummaryThread };
