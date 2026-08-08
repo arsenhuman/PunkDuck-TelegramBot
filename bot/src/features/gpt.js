@@ -1,9 +1,9 @@
 const OpenAI = require('openai');
 const SETTINGS = require('../../settings');
-const { t } = require('../core/i18n');
+const { t, getPrompt } = require('../core/i18n');
 
 const client = new OpenAI({ apiKey: SETTINGS.OPENAI_API_KEY });
-const MODEL = SETTINGS.OPENAI_MODEL || 'gpt-4o-mini';
+const MODEL = SETTINGS.OPENAI_MODEL_BULLY || 'gpt-4o';
 
 async function handleGpt(ctx, tenant) {
     const question = ctx.message.text.split(' ').slice(1).join(' ').trim();
@@ -18,6 +18,7 @@ async function handleGpt(ctx, tenant) {
         max_tokens: 500,
         temperature: 0.7,
         messages: [
+            { role: 'system', content: getPrompt(tenant, 'gpt') },
             { role: 'user', content: question },
         ],
     });
