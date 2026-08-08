@@ -9,6 +9,11 @@
 // intensity is the one exception — it's a plain column on chat_settings
 // (chat-level trait, not tied to any one feature), so it's set directly via
 // { intensity: level } rather than nested inside a features.* patch.
+//
+// The frequency menu's "off" button and the features menu's toggle button
+// both write the SAME field (features.<name>.enabled) — there's no separate
+// on/off flag for "frequency-off" vs "feature disabled". Turning a feature
+// off from either menu is reflected in both.
 
 const { t } = require('../core/i18n');
 const { resolveTenant, invalidateTenantCache } = require('../core/resolveTenant');
@@ -27,6 +32,14 @@ const BULLY_FREQUENCY_PRESETS = {
     rare: { minInterval: 150, jitter: 30 },
     medium: { minInterval: 70, jitter: 15 },
     often: { minInterval: 30, jitter: 10 },
+};
+
+// target -> { presets, presetKey, labelKey } — drives buildFrequencySection
+// generically so cigarette/bully render identically instead of one being
+// hand-special-cased (that mismatch is what caused the original bug).
+const FREQUENCY_SECTIONS = {
+    cigarette: { presets: CIGARETTE_FREQUENCY_PRESETS, presetKey: 'chance', labelKey: 'settingsFrequencyCigaretteLabel' },
+    bully: { presets: BULLY_FREQUENCY_PRESETS, presetKey: 'minInterval', labelKey: 'settingsFrequencyBullyLabel' },
 };
 
 function frequencyLevel(presets, config, key) {
@@ -84,28 +97,35 @@ function buildFeaturesMenu(tenant) {
     return { text: t(tenant, 'settingsFeaturesTitle'), keyboard: rows };
 }
 
-function buildFrequencyMenu(tenant) {
-    const cigLevel = frequencyLevel(CIGARETTE_FREQUENCY_PRESETS, tenant.features.cigarette, 'chance');
-    const bullyLevel = frequencyLevel(BULLY_FREQUENCY_PRESETS, tenant.features.bully, 'minInterval');
-    const markCig = (l) => (cigLevel === l ? '✅ ' : '');
-    const markBully = (l) => (bullyLevel === l ? '✅ ' : '');
+/**
+ * One section (header + rate buttons + off button) for a single frequency
+ * target ('cigarette' or 'bully'). Both targets go through this exact same
+ * builder now, so they can't visually drift apart again.
+ */
+function buildFrequencySection(tenant, target) {
+    const { presets, presetKey, labelKey } = FREQUENCY_SECTIONS[target];
+    const enabled = Boolean(tenant.features[target]?.enabled);
+    const currentLevel = enabled ? frequencyLevel(presets, tenant.features[target], presetKey) : null;
+    const mark = (level) => (currentLevel === level ? '✅ ' : '');
+    const offMark = !enabled ? '✅ ' : '';
 
+    return [
+        [{ text: t(tenant, labelKey), callback_data: 'noop' }],
+        [
+            { text: `${mark('rare')}${t(tenant, 'freqRare')}`, callback_data: `st:freq:${target}:rare` },
+            { text: `${mark('medium')}${t(tenant, 'freqMedium')}`, callback_data: `st:freq:${target}:medium` },
+            { text: `${mark('often')}${t(tenant, 'freqOften')}`, callback_data: `st:freq:${target}:often` },
+        ],
+        [{ text: `${offMark}🚫 ${t(tenant, 'freqOff')}`, callback_data: `st:freq:${target}:off` }],
+    ];
+}
+
+function buildFrequencyMenu(tenant) {
     return {
-        text:
-            `${t(tenant, 'settingsFrequencyTitle')}\n\n` +
-            `${t(tenant, 'settingsFrequencyCigaretteLabel')}`,
+        text: t(tenant, 'settingsFrequencyTitle'),
         keyboard: [
-            [
-                { text: `${markCig('rare')}${t(tenant, 'freqRare')}`, callback_data: 'st:freq:cigarette:rare' },
-                { text: `${markCig('medium')}${t(tenant, 'freqMedium')}`, callback_data: 'st:freq:cigarette:medium' },
-                { text: `${markCig('often')}${t(tenant, 'freqOften')}`, callback_data: 'st:freq:cigarette:often' },
-            ],
-            [{ text: t(tenant, 'settingsFrequencyBullyLabel'), callback_data: 'noop' }],
-            [
-                { text: `${markBully('rare')}${t(tenant, 'freqRare')}`, callback_data: 'st:freq:bully:rare' },
-                { text: `${markBully('medium')}${t(tenant, 'freqMedium')}`, callback_data: 'st:freq:bully:medium' },
-                { text: `${markBully('often')}${t(tenant, 'freqOften')}`, callback_data: 'st:freq:bully:often' },
-            ],
+            ...buildFrequencySection(tenant, 'cigarette'),
+            ...buildFrequencySection(tenant, 'bully'),
             [{ text: t(tenant, 'settingsBackButton'), callback_data: 'st:menu:main' }],
         ],
     };
@@ -182,10 +202,20 @@ async function handleSettingsCallback(ctx) {
     }
 
     if (action === 'freq') {
-        const [target, level] = rest; // target: 'cigarette' | 'bully'
-        const presets = target === 'cigarette' ? CIGARETTE_FREQUENCY_PRESETS : BULLY_FREQUENCY_PRESETS;
-        const patch = presets[level];
+        const [target, level] = rest; // target: 'cigarette' | 'bully'; level: 'rare'|'medium'|'often'|'off'
+        const { presets } = FREQUENCY_SECTIONS[target] ?? {};
+        if (!presets) { await ctx.answerCbQuery(); return; }
+
+        // Picking a rate implies "and turn it on" — otherwise choosing
+        // "часто" while the feature is off would silently do nothing.
+        // Picking "off" only flips enabled, keeping the last chosen rate
+        // untouched so it's remembered for next time it's turned back on.
+        const patch = level === 'off'
+            ? { enabled: false }
+            : presets[level] ? { ...presets[level], enabled: true } : null;
+
         if (!patch) { await ctx.answerCbQuery(); return; }
+
         await updateTenantSettings(chatId, { features: { [target]: { ...tenant.features[target], ...patch } } });
         invalidateTenantCache(chatId);
         const updated = await resolveTenant(chatId);
