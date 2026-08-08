@@ -72,6 +72,9 @@
     "hard": "Be maximally savage and toxic, don't hold back, profanity and dark humor are fine."
   },
   "settingsFrequencyAutoSummaryLabel": "🔁 Auto-summary:",
+  "autoSummaryFreqDaily": "once a day",
+  "autoSummaryFreqEvery3Days": "once every 3 days",
+  "autoSummaryFreqWeekly": "once every 7 days",
   "autoSummaryResult": "🔁 Auto-summary ({messageCount} msgs):\n\n{summaryText}",
   "autoSummaryThreadSet": "Done, auto-summaries will now be posted here.",
   "autoSummaryDisabled": "Auto-summary is disabled — enable it in /settings → Features.",
